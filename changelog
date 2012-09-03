@@ -7,3 +7,13 @@ bash-color-tools changelog
 * new tag v0.9.1
 * fixed 'list' bug caused by moving code off to own function.
 
+2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
+* new tag v0.9.2
+* fixed bug caused by empty directory.
+
+2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
+* new tag v0.9.3
+* fixed bug mis-named filename
+* updated changelog
+
+
