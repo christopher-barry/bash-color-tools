@@ -49,10 +49,11 @@ function prompt()
         return 1
     }
     [[ "${1}" == "list" ]] && {
-        prompt_theme_list
-    } || {
-        echo "hmm. no themes appear to be installed. try re-installing."
-        return 1
+        prompt_theme_list || {
+            echo "hmm. no themes appear to be installed. try re-installing."
+            return 1
+        }
+        return 0
     }
 
     # find the specified theme, personal version first

@@ -3,3 +3,7 @@ bash-color-tools changelog
 2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
 * initial release tag 0.9.0 pushed into GitHub
 
+2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
+* new tag v0.9.1
+* fixed 'list' bug caused by moving code off to own function.
+

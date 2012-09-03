@@ -86,15 +86,15 @@ function prompt_theme_list()
         [[ ${#p_theme[@]} -gt 0 ]] || p_theme=( 'none available' )
         printf " * %s\n" "${p_theme[@]}"
     }
+
     [[ -d ${THEME_DIR} ]] && {
         echo
         echo " Standard Themes: ${THEME_DIR}/"
         local -a s_theme=( $(ls -1 ${THEME_DIR}/) )
         [[ ${#s_theme[@]} -gt 0 ]] || s_theme=( 'none available' )
         printf " * %s\n" "${s_theme[@]}"
-    } || {
-        echo "hmm. no themes appear to be installed. try re-installing."
-    }
+    } || return 1
+
     [[ -d ${THEME_DIR%/*}/contrib ]] && {
         echo
         echo " Contrib Themes: ${THEME_DIR%/*}/contrib"
@@ -102,10 +102,11 @@ function prompt_theme_list()
         [[ ${#p_theme[@]} -gt 0 ]] || p_theme=( 'none available' )
         printf " * %s\n" "${p_theme[@]}"
     }
-        echo
-        echo "run: 'prompt <theme_name>' to set theme."
-        echo "edit ~/.prompt-themes.d/conf/<theme_name>.theme to customize theme colors"
-    }
+
+    echo
+    echo "run: 'prompt <theme_name>' to set theme."
+    echo "edit ~/.prompt-themes.d/conf/<theme_name>.theme to customize theme colors"
+
     return 0
 }
 
