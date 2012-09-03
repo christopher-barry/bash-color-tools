@@ -209,12 +209,12 @@ case "${1}" in
         ;;
 
     colors)
-        [[ -f ${0%/*}/print_${0##*/}_colors ]] && {
+        [[ -f ${0%/*}/print-face-colors ]] && {
             CMD_NAME=colors
-            source ${0%/*}/print_${0##*/}_colors
+            source ${0%/*}/print-face-colors
             pallette
         } || {
-            echo >&2 "cannot locate: '${0%/*}/print_${0##*/}_colors'"
+            echo >&2 "cannot locate: '${0%/*}/print-face-colors'"
             echo >&2 "this file is required to generate color pallettes"
             exit 1
         }
