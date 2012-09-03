@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Bash-color-tools by christopher-barry</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Bash-color-tools</h1>
+        <h2>provides a themeable colorized shell prompt framework and a hi-color echo command and lib</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/christopher-barry/bash-color-tools/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/christopher-barry/bash-color-tools/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/christopher-barry/bash-color-tools" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>bash-color-tools</h1>
+
+<pre><code>Copyright 2007-2012 Christopher Barry &lt;christopher.r.barry@gmail.com&gt;
+
+This file is part of the bash-color-tools
+
+bash-color-tools is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+</code></pre>
+
+<h1></h1>
+
+<p>bash-color-tools came about mostly out of annoyance that someone
+hadn't already done it.</p>
+
+<p>I already had a crappy color prompt I hacked together years ago after
+reading the bash-prompt-howto that I had dragged around from box to
+box, various work places, etc., and it mostly never changed, because
+it was such a mindfuck to deal with it. That, and it only did like 16
+colors - all of which were ugly. There were many times I wanted to
+change it, but it was such a bitch I couldn't or wouldn't be bothered.</p>
+
+<p>Then I had a need for colorizing text generically, in other non-prompt
+bash applications, and set out to create a truly useful hi-color echo
+command that was as easy to use as echo, and hid all that escape code
+crap from the user. From that effort, 'face' was born.</p>
+
+<p>Then, once I started using git, I went back to my old prompt script
+'myprompt', and started hacking in branch support. After about 5
+minutes I realized I could leverage face for all of this and even
+allow dotfiles and themeing, and set off to create what is finally the
+'prompt' feature of bash-color-tools. Only took like 5 years to
+actually do it.</p>
+
+<p>All of this was not without some really annoying hurdles, and I got
+some excellent help along the way from some great friends like:</p>
+
+<p>Michael Brooks: for the index color math code
+Buck Ryan:      for helping track down the nasty escaping bug</p>
+
+<p>Anyway, here it is and hopefully you'll find it useful. If you do, let
+me know. And if you create some cool themes, send them in and I'll
+include them in the distribution.</p>
+
+<p>Cheers,
+-C</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
