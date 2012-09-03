@@ -1,0 +1,112 @@
+# -*- mode: sh; -*-
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# functions
+#-------------------------------------------------------------------------------
+# function lib available to all prompt themes
+#===============================================================================
+
+#===============================================================================
+# prompt functions embedded in PS1 string, marked by a short alias
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+# output the sized current directory
+function prompt_get_pwd()
+{
+    prompt_truncate ${PROMPT_MAXPATHLEN} "${PWD}"
+}
+# short alias
+function pgp() { prompt_get_pwd "${@}"; }
+
+#-------------------------------------------------------------------------------
+# output a date/time string like: "09/02 17:53:13"
+function prompt_date_time()
+{
+    date +%m"/"%d" "%T
+}
+# short alias
+function pdt() { prompt_date_time; }
+
+#
+
+#===============================================================================
+# utility functions used by other function lib functions - no aliases
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+# truncate the front of a string, returning the specified length prefixed by ...
+# prompt_truncate <length> <"string">
+function prompt_truncate()
+{
+    [[ ${#} -ge 2 ]] || { echo "${FUNCNAME}: bad arglist: '${@}'"; return 1; }
+    local len=${1}; shift
+    local str="${*}"
+    [[ ${#str} -le ${len} || ${len} -le 0 ]] && {
+        echo "${str}"
+    } || {
+        echo "...${str: -${len}}"
+    }
+}
+
+#-------------------------------------------------------------------------------
+# generate list of installed themes
+function prompt_theme_list()
+{
+    echo "Current Theme:"
+    echo "* ${THEME:-none active}"
+    echo
+    echo "Available Themes"
+    echo "~~~~~~~~~~~~~~~~"
+    [[ -d ~/.prompt-themes.d ]] && {
+        echo
+        echo " Personal Themes: ~/.prompt-themes.d/"
+        local -a p_theme=( $(ls -1 ~/.prompt-themes.d | grep -v conf) )
+        [[ ${#p_theme[@]} -gt 0 ]] || p_theme=( 'none available' )
+        printf " * %s\n" "${p_theme[@]}"
+    }
+    [[ -d ${THEME_DIR} ]] && {
+        echo
+        echo " Standard Themes: ${THEME_DIR}/"
+        local -a s_theme=( $(ls -1 ${THEME_DIR}/) )
+        [[ ${#s_theme[@]} -gt 0 ]] || s_theme=( 'none available' )
+        printf " * %s\n" "${s_theme[@]}"
+    } || {
+        echo "hmm. no themes appear to be installed. try re-installing."
+    }
+    [[ -d ${THEME_DIR%/*}/contrib ]] && {
+        echo
+        echo " Contrib Themes: ${THEME_DIR%/*}/contrib"
+        local -a p_theme=( $(ls -1 ${THEME_DIR%/*}/contrib) )
+        [[ ${#p_theme[@]} -gt 0 ]] || p_theme=( 'none available' )
+        printf " * %s\n" "${p_theme[@]}"
+    }
+        echo
+        echo "run: 'prompt <theme_name>' to set theme."
+        echo "edit ~/.prompt-themes.d/conf/<theme_name>.theme to customize theme colors"
+    }
+    return 0
+}
+
+

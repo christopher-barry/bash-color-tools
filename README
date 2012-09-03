@@ -1,0 +1,58 @@
+bash-color-tools
+================================================================================
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+================================================================================
+
+bash-color-tools came about mostly out of annoyance that someone
+hadn't already done it.
+
+I already had a crappy color prompt I hacked together years ago after
+reading the bash-prompt-howto that I had dragged around from box to
+box, various work places, etc., and it mostly never changed, because
+it was such a mindfuck to deal with it. That, and it only did like 16
+colors - all of which were ugly. There were many times I wanted to
+change it, but it was such a bitch I couldn't or wouldn't be bothered.
+
+Then I had a need for colorizing text generically, in other non-prompt
+bash applications, and set out to create a truly useful hi-color echo
+command that was as easy to use as echo, and hid all that escape code
+crap from the user. From that effort, 'face' was born.
+
+Then, once I started using git, I went back to my old prompt script
+'myprompt', and started hacking in branch support. After about 5
+minutes I realized I could leverage face for all of this and even
+allow dotfiles and themeing, and set off to create what is finally the
+'prompt' feature of bash-color-tools. Only took like 5 years to
+actually do it.
+
+All of this was not without some really annoying hurdles, and I got
+some excellent help along the way from some great friends like:
+
+Michael Brooks: for the index color math code
+Buck Ryan:      for helping track down the nasty escaping bug
+
+Anyway, here it is and hopefully you'll find it useful. If you do, let
+me know. And if you create some cool themes, send them in and I'll
+include them in the distribution.
+
+
+Cheers,
+-C
+
+

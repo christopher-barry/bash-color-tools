@@ -1,0 +1,105 @@
+# -*- mode: sh; -*-
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# git
+#-------------------------------------------------------------------------------
+# git theme for prompt
+#===============================================================================
+
+THEME=git
+
+#===============================================================================
+# 'prompt git'
+# [master][...src/apps/]$
+function prompt_git_theme()
+{
+    # override and customize defaults with dotfile
+    [[ -f ~/.prompt-themes.d/conf/${THEME}.theme ]] || {
+        mkdir -p ~/.prompt-themes.d/conf
+        cat > ~/.prompt-themes.d/conf/${THEME}.theme <<EOF
+# default ${THEME} theme settings for prompt
+#
+# max length of path to display
+PROMPT_MAXPATHLEN=14
+# max length of branch name to display
+PROMPT_MAXBRANCHLEN=14
+
+# run 'face -v colors' for rgb pallette output
+# to see what color == what rgb value
+#
+# default color rgb values for prompt elements
+PROMPT_BRKT_CLR=011
+PROMPT_GITBRANCH_CLR=210
+PROMPT_DIR_CLR=235
+PROMPT_SYM_CLR=133
+
+# default prompt elements
+PROMPT_NOGIT_CHAR='-'
+PROMPT_LBRKT_CHAR='['
+PROMPT_RBRKT_CHAR=']'
+[[ \$(id -u) -eq 0 ]] && {
+    PROMPT_SYM_CHAR='# '
+} || {
+    PROMPT_SYM_CHAR='\$ '
+}
+
+EOF
+
+       echo "edit ~/.prompt-themes.d/conf/${THEME}.theme to modify colors, etc."
+    }
+    source ~/.prompt-themes.d/conf/${THEME}.theme
+
+    return 0
+}
+#
+function prompt_git_branch()
+{
+    if [[ "$(git branch 2>/dev/null)" =~ [*][[:blank:]]([-a-zA-Z0-9_. ]+) ]]
+    then
+        gb="${BASH_REMATCH[1]}"
+        prompt_truncate ${PROMPT_MAXBRANCHLEN} "${gb}"
+    else
+        prompt_truncate ${PROMPT_MAXBRANCHLEN} "${PROMPT_NOGIT_CHAR}"
+    fi
+
+    return 0
+}
+# short alias
+function pgb() { prompt_git_branch "${@}"; }
+
+# init globals
+prompt_git_theme
+
+# set colors
+lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+# the following two arrays elements wrap the
+# calculated branch and dir in color escape codes
+d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+b=( $(_face -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
+
+# set the prompt
+PS1="${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+

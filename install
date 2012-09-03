@@ -1,0 +1,166 @@
+#!/bin/bash
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# install
+#-------------------------------------------------------------------------------
+# installation script for bash-color-tools
+#===============================================================================
+
+[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+    echo "Sorry, gotta have bash version >= 4 to run bash-color-tools."
+    exit 1
+}
+
+#-------------------------------------------------------------------------------
+function _install_()
+{
+    local inst_prefix=${1}
+    local pkg_dir=${0%/*}
+
+    mkdir -p ${inst_prefix}/share{/doc,}/bash-color-tools 2>/dev/null || {
+        echo "you do not have permission to install in ${inst_prefix}/share/."
+        return 1
+    }
+    rsync -a ${pkg_dir}/src/{contrib,libexec,themes} ${inst_prefix}/share/bash-color-tools/ || return 1
+    rsync -a ${pkg_dir}/install ${inst_prefix}/share/bash-color-tools/libexec/ || return 1
+    chmod 755 ${inst_prefix}/share/bash-color-tools/libexec/{face,print-face-colors,install} || return 1
+    (cd ${inst_prefix}/share/bash-color-tools/libexec; ln -sf install uninstall) || return 1
+
+    rsync -a ${pkg_dir}/examples ${inst_prefix}/share/doc/bash-color-tools/ || return 1
+
+    rsync -a $(find ${pkg_dir} -maxdepth 1 -type f -a -not -name install 2>/dev/null) \
+        ${inst_prefix}/share/doc/bash-color-tools/ || return 1
+
+    find ${inst_prefix}/share{/doc,}/bash-color-tools -type f 2>/dev/null \
+        >${inst_prefix}/share/doc/bash-color-tools/MANIFEST
+}
+
+#-------------------------------------------------------------------------------
+function _uninstall_()
+{
+    local inst_prefix=${1}
+    local -a inst_files=( $(<${inst_prefix}/share/doc/bash-color-tools/MANIFEST) )
+    local -a files=()
+
+    for f in "${inst_files[@]}"; do
+        rm -f ${f}
+    done
+
+    files=( $(find ${inst_prefix}/share/bash-color-tools -type f) )
+    [[ ${#files[@]} -gt 0 ]] && {
+        echo "directory ${inst_prefix}/share/bash-color-tools is not empty, so not deleting it."
+    } || {
+        rm -rf ${inst_prefix}/share/bash-color-tools
+    }
+
+    files=( $(find ${inst_prefix}/share/doc/bash-color-tools -type f) )
+    [[ ${#files[@]} -gt 0 ]] && {
+        echo "directory ${inst_prefix}/share/doc/bash-color-tools is not empty, so not deleting it."
+    } || {
+        rm -rf ${inst_prefix}/share/doc/bash-color-tools
+    }
+
+    return 0
+}
+
+#-------------------------------------------------------------------------------
+function _install_links_()
+{
+    local inst_prefix=${1}
+    (
+        mkdir -p ${inst_prefix}/bin
+        cd ${inst_prefix}/bin
+        ln -sf ${inst_prefix}/share/bash-color-tools/libexec/face || return 1
+        ln -sf ${inst_prefix}/share/bash-color-tools/libexec/print-face-colors || return 1
+    )
+}
+
+#-------------------------------------------------------------------------------
+function _uninstall_links_()
+{
+    local inst_prefix=${1}
+    [[ -f ${inst_prefix}/bin/face ]] && rm -f ${inst_prefix}/bin/face
+    [[ -f ${inst_prefix}/bin/print-face-colors ]] && rm -f ${inst_prefix}/bin/print-face-colors
+}
+
+#-------------------------------------------------------------------------------
+function _set_themes_dir_()
+{
+    local inst_prefix=${1}
+    sed -i "s,^declare THEME_DIR=.*$,declare THEME_DIR=${inst_prefix}/share/bash-color-tools/themes," \
+        ${inst_prefix}/share/bash-color-tools/libexec/prompt || return 1
+}
+
+#-------------------------------------------------------------------------------
+# make sure we can access this prefix location
+function verify_permissions()
+{
+    local inst_prefix=${1}
+    local tstfn=${RANDOM}-${RANDOM}-${RANDOM}
+    touch ${PREFIX}/${tstfn} 2>/dev/null && {
+        rm -f ${tstfn}
+    } || {
+        return 1
+    }
+    return 0
+}
+
+#===============================================================================
+# (un)install bash-color-tools
+[[ ${PREFIX} ]] || PREFIX=/usr
+
+case ${0##*/} in
+
+    install)
+        verify_permissions ${PREFIX} || {
+            echo "Oops! you do not have permission to install into ${PREFIX}."
+            echo "use sudo, or: 'PREFIX=/some/other/dir ./install' for non-privileged installations"
+            exit 1
+        }
+        [[ "${0}" =~ ${PREFIX} ]] && { echo "uninstall, then install from the original package."; exit 1; }
+        _install_ ${PREFIX} || { echo "installation failed."; exit 1; }
+        _install_links_ ${PREFIX} || { echo "installation of links failed."; exit 1; }
+        _set_themes_dir_ ${PREFIX} || { echo "configuring prompt themes directory failed."; exit 1; }
+        ${PREFIX}/bin/face -f 020 "bash-color-tools are installed"
+        ${PREFIX}/bin/face -nf 321 "see "
+        ${PREFIX}/bin/face -nf 310 "${PREFIX}/share/doc/bash-color-tools/* "
+        ${PREFIX}/bin/face -f 321 "for more info"
+        [[ "$(which print-face-colors)" ]] || {
+            ${PREFIX}/bin/face -f red "dont forget to add '${PREFIX}/bin' to your PATH variable in ~/.bashrc"
+        }
+        ;;
+
+    uninstall)
+        PREFIX=$(echo ${0} | sed 's,/share/bash-color-tools/libexec/uninstall,,')
+        [[ -f ${PREFIX}/share/doc/bash-color-tools/MANIFEST ]] || { echo "bash-color-tools is not correctly installed in ${PREFIX}/share. quitting."; exit 1; }
+        verify_permissions ${PREFIX} || { echo "you do not have permission to uninstall from ${PREFIX}."; exit 1; }
+        (
+            cd /tmp
+            _uninstall_links_ ${PREFIX} || { echo "uninstallation of links failed."; exit 1; }
+            _uninstall_ ${PREFIX} || { echo "uninstallation failed."; exit 1; }
+            echo "bash-color-tools have been uninstalled"
+        )
+        ;;
+esac
+

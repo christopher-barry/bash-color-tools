@@ -1,0 +1,86 @@
+bash-color-tools
+================================================================================
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+================================================================================
+
+The following commands are part of the bash-color-tools:
+
+* face
+
+  a hi-color echo command that can be used in scripts or on the
+  commandline.
+
+  type face -H for more information.
+
+
+* print-face-colors
+
+  prints out color pallettes, and with '-v', also their rgb values
+  to be used with face.
+
+  can also be run with 'face -v colors'
+
+
+* prompt
+
+  face and prompt work together to provide themeable colorized prompts.
+
+  To use it, do the following after installing bash-color-tools:
+
+  In your ~/.bashrc, add the following code:
+
+  # source color lib
+  [[ -f /usr/share/bash-color-tools/libexec/face ]] && {
+     source /usr/share/bash-color-tools/libexec/face libmode
+  }
+  # source prompt framework
+  [[ -f /usr/share/bash-color-tools/libexec/prompt ]] && {
+     source /usr/share/bash-color-tools/libexec/prompt
+  }
+
+  This will place the functions needed into the environment.
+
+  Then run 'prompt list' on the commandline to see available prompt
+  themes. Type 'prompt <theme_name>' to load one. To have the prompt
+  start automatically with each shell, add 'prompt <theme_name>' below
+  the lines sourcing the libs above in your .bashrc file.
+
+  For debian boxen, you can modify code already in your .bashrc.
+  Here's what mine looks like:
+
+  ==snip=========8<-------------------------
+
+  # set prompt
+  if [ "$color_prompt" = yes ] && [[ "$(declare -F | grep _face)" ]]; then
+      # source color libs
+      [[ -f /usr/share/bash-color-tools/libexec/face ]] && {
+              source /usr/share/bash-color-tools/libexec/face libmode
+      }
+      [[ -f /usr/share/bash-color-tools/libexec/prompt ]] && {
+              source /usr/share/bash-color-tools/libexec/prompt
+      }
+      prompt git
+  else
+      PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+  fi
+
+
+
+
+

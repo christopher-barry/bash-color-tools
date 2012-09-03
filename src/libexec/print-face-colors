@@ -1,0 +1,191 @@
+#!/bin/bash
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# print-face-colors
+#-------------------------------------------------------------------------------
+# prints various and sundry color pallettes and their rgb values for 'face'
+#
+# not an exhaustive or even technically correct set of pallettes, it simply
+# dumps a bunch of colored blocks and shows the rgb numbers to produce them.
+#===============================================================================
+
+[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+    echo "Sorry, gotta have bash version >= 4 to run this."
+    exit 1
+}
+
+#-------------------------------------------------------------------------------
+# rgb mode (highcolor) demo for 'face' command
+# quasi-random pallette-like thingies...
+#-------------------------------------------------------------------------------
+function pallette()
+{
+    local r=1 g=1 b=1
+    echo "       Primary Pallette"
+
+    until [[ ${r} -eq 6 ]]; do
+        pallette_row ${r}00
+        ((r++))
+    done
+    until [[ ${g} -eq 6 ]]; do
+        pallette_row 0${g}0
+        ((g++))
+    done
+    until [[ ${b} -eq 6 ]]; do
+        pallette_row 00${b}
+        ((b++))
+    done
+    echo
+
+    echo "      Secondary Pallette"
+
+    local r=1 g=0 b=1
+    until [[ ${b} -eq 6 ]]; do
+        pallette_row ${r}0${b}
+        ((r++))
+        ((b++))
+    done
+    local r=1 g=1 b=0
+    until [[ ${r} -eq 6 ]]; do
+        pallette_row ${r}${g}0
+        ((r++))
+        ((g++))
+    done
+    local r=0 g=1 b=1
+    until [[ ${g} -eq 6 ]]; do
+        pallette_row 0${g}${b}
+        ((g++))
+        ((b++))
+    done
+    echo
+
+    echo "         Nested loop"
+    local r=0 g=0 b=0
+    for r in {1..5}; do
+        pallette_row ${r}${g}${b}
+        for g in {1..5}; do
+            pallette_row ${r}${g}${b}
+            for b in {1..5}; do
+                pallette_row ${r}${g}${b}
+            done
+        done
+    done
+    echo
+
+    echo "     Red Cummulative loop"
+    local r=0 g=0 b=0
+    for r in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    for g in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    for b in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    echo
+
+    echo "    Green Cummulative loop"
+    local r=0 g=0 b=0
+    for g in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    for b in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    for r in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    echo
+
+    echo "    Blue Cummulative loop"
+    local r=0 g=0 b=0
+    for b in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    for r in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    for g in {1..5}; do
+        pallette_row ${r}${g}${b}
+    done
+    [[ ${VERBOSE} ]] || {
+        echo
+        echo " Try also: ${0##*/} -v ${CMD_NAME}"
+        echo " to show rgb numeric values"
+        echo
+    }
+}
+
+#-------------------------------------------------------------------------------
+# draw a row of color out to white in increments
+# beginning at the highest saturation of the hue
+# and containing in the row the specified rgb.
+function pallette_row()
+{
+    local rgb=${1}
+    local r=${rgb:0:1}
+    local g=${rgb:1:1}
+    local b=${rgb:2:1}
+    local -a a_rgb=()
+
+    until [[ ${r} -eq 0 || ${g} -eq 0 || ${b} -eq 0 ]]; do
+        [[ ${r} -gt 0 ]] && ((r--))
+        [[ ${g} -gt 0 ]] && ((g--))
+        [[ ${b} -gt 0 ]] && ((b--))
+    done
+
+    a_rgb=( ${r}${g}${b} )
+
+    until [[ ${r}${g}${b} -eq 555 ]]; do
+        [[ ${r} -lt 5 ]] && ((r++))
+        [[ ${g} -lt 5 ]] && ((g++))
+        [[ ${b} -lt 5 ]] && ((b++))
+        a_rgb+=( ${r}${g}${b} )
+    done
+
+    [[ ${VERBOSE} ]] && {
+        for (( c=0; c<${#a_rgb[@]}; c++ )); do
+            echo -n " ${a_rgb[c]} "
+        done
+        echo
+    }
+    for (( c=0; c<${#a_rgb[@]}; c++ )); do
+        _face -n -b ${a_rgb[c]} '     '
+    done
+    echo
+}
+
+# if we're being run standalone
+if [[ "${0##*/}" != "face" ]]; then
+    [[ -f ${0%/*}/face ]] && {
+        [[ "${1}" == "-v" ]] && VERBOSE=1 CMD_NAME=
+        source ${0%/*}/face libmode
+        pallette
+    } || {
+        echo >&2 "cannot locate: ${0%/*}face"
+        echo >&2 "this file is required to generate color pallettes"
+        exit 1
+    }
+fi

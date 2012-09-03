@@ -1,0 +1,97 @@
+# -*- mode: sh; -*-
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# prompt
+#-------------------------------------------------------------------------------
+# generate theme-able and customizable shell prompts
+#===============================================================================
+
+[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+    echo "Sorry, gotta have bash version >= 4 to run this."
+    exit 1
+}
+
+declare THEME_DIR=/usr/share/bash-color-tools/themes
+export  THEME_DIR
+
+#===============================================================================
+# set the prompt
+function prompt()
+{
+    [[ ${#} -eq 0 ]] && { echo "Usage: prompt <theme_name|list>"; return 1; }
+
+    # make various functions accessible to all themes
+    [[ -f ${THEME_DIR%/*}/libexec/functions ]] && {
+        source ${THEME_DIR%/*}/libexec/functions
+    } || {
+        echo "${THEME_DIR%/*}/libexec/functions lib missing. cannot continue."
+        return 1
+    }
+    [[ "${1}" == "list" ]] && {
+        prompt_theme_list
+    } || {
+        echo "hmm. no themes appear to be installed. try re-installing."
+        return 1
+    }
+
+    # find the specified theme, personal version first
+    if [[ -f ~/.prompt-themes.d/${1} ]]; then
+        source ~/.prompt-themes.d/${1}
+    elif [[ -f ${THEME_DIR}/${1} ]]; then
+        source ${THEME_DIR}/${1}
+    elif [[ -f ${THEME_DIR%/*}/contrib/${1} ]]; then
+        source ${THEME_DIR%/*}/contrib/${1}
+    else
+        THEME=builtin
+        echo "theme '${1}' not found. using builtin defaults."
+        echo "use 'prompt list' to view available themes"
+        echo "see CUSTOMIZING for how to customize"
+        # max length of path to display
+        PROMPT_MAXPATHLEN=20
+        # default color rgb for prompt elements
+        PROMPT_USER_CLR=011
+        PROMPT_AT_CLR=122
+        PROMPT_HOST_CLR=011
+        PROMPT_DIR_CLR=135
+        PROMPT_SYM_CLR=025
+        [[ $(id -u) -eq 0 ]] && {
+            PROMPT_SYM_CHAR='# '
+        } || {
+            PROMPT_SYM_CHAR='$ '
+        }
+        u="$(_face -Pnf ${PROMPT_USER_CLR} "$(whoami)")"
+        a="$(_face -Pnf ${PROMPT_AT_CLR} "@")"
+        h="$(_face -Pnf ${PROMPT_HOST_CLR} "${HOSTNAME}:")"
+        rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+        sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+        # the following array wraps the
+        # calculated dir in color escape codes
+        d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+
+        # set the default prompt
+        PS1="${u}${a}${h}${d[0]}\$(pgp)${d[1]}${sc}"
+
+    fi
+
+}

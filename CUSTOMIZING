@@ -1,0 +1,334 @@
+bash-color-tools
+================================================================================
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+================================================================================
+
+INTRODUCTION
+
+Customizing 'prompt' to your needs is fairly simple, and there's a
+couple of basic ways to go about it:
+
+* simply modify the colors in the config files for the existing themes
+  located (once you run them) in your home directory in
+  ~/.prompt-themes.d/conf/<theme_name>.theme.
+
+Or, for the adventurous:
+
+* create a new theme based on the theme template located in
+  ${INSTALL_PREFIX}/share/doc/bash-color-tools/examples/template. Your
+  themes can either be personal, or system-wide, depending on where
+  they're located in the filesystem.
+
+
+Setting the colors is simple, as prompt uses 'face' to generate the
+color strings for the PS1 prompt variable. Each color is defined by a
+numeric triplet, or rgb value. The first number of the triplet is red,
+the second is green and the third is blue. Each numeric element has a
+range of valid values from 0-5. So 500 is full-on red, 050 is full-on
+green, and 005 id full-on blue. 000 is full-on black, and 555 is
+full-on white.
+
+If you run 'face -v colors' in an xterm, it will dump a bunch of
+example pallettes with their corresponding rgb values to help you
+decide which numbers to use in your configurations.
+
+
+If you want to dive into creating your own theme yourself, rather than
+just tweaking colors of the existing themes, I suggest you have a look
+at the various themes in:
+
+ ${INSTALL_PREFIX}/share/bash-color-tools/themes
+
+and either copy one of these, or the template in:
+
+ ${INSTALL_PREFIX}/share/doc/bash-color-tools/examples/template
+
+to your personal theme directory located at:
+
+ ~/.prompt-themes.d/.
+
+
+UNDERSTANDING THEMES
+
+Themes are basically just script snippets that get sourced into the
+prompt framework. The theme itself is what actually sets the PS1
+variable when the command 'prompt <theme_name>' is run.
+
+Themes can use any of the various pre-defined functions that are that
+are located in:
+
+ ${INSTALL_PREFIX}/share/bash-color-tools/libexec/functions
+
+And themes can also define their own specific functions in the theme
+file itself.
+
+Each theme snippet has a certain format that needs to be
+followed. Below is an annotated version of the 'template' theme. I
+will explain how to create your own theme by disecting and explaining
+this theme. This template is a great starting place to create your
+own.
+
+I suggest you open up the real template in another window now, so you
+can see the unannotated version right next to this document at the
+same time. Trust me, it'll help you see what's annotation and what's
+actually in the template. You can find it by default here:
+
+/usr/share/doc/bash-color-tools/examples/template
+
+
+Coding style rules
+~~~~~~~~~~~~~~~~~~
+* There can be NO TABS anywhere in the file, set your editor for
+  4-space, space-filled tabs.
+
+* NO CamelCase ANYWHERE!
+
+* global vars are UPPERCASE, prefixed with 'PROMPT_', and underscore
+  delimited.
+
+* local vars are lowercase, underscore delimited.
+
+* function defs begin with the keyword 'function', are prefixed with
+  'prompt_', are all lowercase, underscore delimited, and have '()'
+  tight to the end of their names.
+
+* functions that are embedded in the PS1 string are called with a
+  short alias, typically only a few letters. (generally just the first
+  letters of each function_name word, but watch out for collisions)
+
+* I'm sure I have other pet peeves I can't think of right now... ;)
+
+
+OK, on to the analysis:
+
+First, there's the header, and it needs to be in the theme if you want
+your theme to be included in the distribution (and I encourage you to
+submit your cool themes). Add a new:
+
+    Copyright <date> <your name> <your email address>
+
+to the license, directly below mine.
+
+# -*- mode: sh; -*-
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+
+Next, there's the titleblock. change 'template' to your theme's
+name. Expand the lower section down as required to describe what your
+theme does, etc. Do not write lines in the block beyond 80 chars.
+
+#===============================================================================
+# template
+#-------------------------------------------------------------------------------
+# theme template for prompt. see CUSTOMIZING in the doc directory for details.
+#===============================================================================
+
+Then, set the THEME variable to your theme's name (no spaces in the name)
+
+THEME=template
+
+Then, there's the command to set it, followed by an example of what it
+looks like.
+
+#===============================================================================
+# 'prompt template'
+# [09/02 17:15:50][...src/apps/]$
+
+Then there's the init function, which by convention is named:
+
+ prompt_<theme_name>_theme
+
+The purpose of this function is to source your personal color settings
+if you have a settings file, and to generate a default file if you
+don't, and then source that. If you ever screw up your personal
+configuration file, simply deleting it will reset it to the defaults
+the next time you load the theme.
+
+Some variables below, like PROMPT_MAXPATHLEN, are used by generic
+functions found in the 'functions' file discussed above, so peruse the
+existing functions and use what you want. Consider placing genrically
+useful functions in the global functions file, and submitting that for
+inclusion as well. That will allow all users to take advantage of them
+in their themes.
+
+function prompt_template_theme()
+{
+    # override and customize defaults with dotfile
+    [[ -f ~/.prompt-themes.d/conf/${THEME}.theme ]] || {
+        mkdir -p ~/.prompt-themes.d/conf
+        cat >> ~/.prompt-themes.d/conf/${THEME}.theme <<EOF
+# default ${THEME} theme settings for prompt
+#
+# max length of path to display
+PROMPT_MAXPATHLEN=14
+
+# run 'face -v colors' for rgb pallette output
+# to see what color == what rgb value
+#
+
+By convention, color vars are named:
+
+PROMPT_<THING>_CLR
+
+
+# default color rgb values for prompt elements
+PROMPT_BRKT_CLR=011
+PROMPT_DATE_CLR=110
+PROMPT_DIR_CLR=024
+PROMPT_SYM_CLR=133
+
+By convention, charater element vars are named:
+
+PROMPT_<ELEMENT_NAME>_CHAR
+
+# default prompt elements
+PROMPT_LBRKT_CHAR='['
+PROMPT_RBRKT_CHAR=']'
+[[ \$(id -u) -eq 0 ]] && {
+    PROMPT_SYM_CHAR='# '
+} || {
+    PROMPT_SYM_CHAR='\$ '
+}
+
+EOF
+
+       echo "edit ~/.prompt-themes.d/conf/${THEME}.theme to modify colors, etc."
+    }
+    source ~/.prompt-themes.d/conf/${THEME}.theme
+
+    return 0
+}
+#
+
+If you have any theme specific functions, define them here.
+
+First thing in the theme snippet, we init all the global theme config
+vars by running the theme function.
+
+# init globals
+prompt_template_theme
+
+
+Next, we set 'very' short prompt-string varnames to the output of the
+face command.
+
+# set colors
+lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+
+Let's break down what just happened in the line above: face was called
+with 3 switches, -P which puts face in 'prompt string' output mode, -n
+which, like echo, inhibits newlines, and -f which requires a
+forground_color rgb parameter. Without variables, the command would
+look like:
+  face -Pnf 011 "["
+try that now on the cmmand line to see what it's doing. scary, eh?
+
+OK, so same thing for the two vars below; we're simply wrapping the
+character elements in escape codes used by the terminal to generate
+color text.
+
+rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+
+Here's where it gets a bit tricky. Whenever you run a function inline
+in the PS1 to do things like output the current directory, the current
+git branch you're on, or the current date and time or whatever, those
+output strings need to be wrapped by escape codes as well. You might
+say to yourself, "self, I think I'll just use face in my function!",
+but you would be dissapointed if you did that, because it'll gag the
+PS1 var and confuse the terminal about line-wrap length.
+
+The way to wrap the function's output string is to create an array of
+two color escape code elements: element[0] is used to set up the color
+for the string, and element[1] is used to set it back to normal.
+
+Here, we're using face to set the foreground 'color' of a space
+character inside an array definition. This has the handy side effect
+of creating two colorizing escape strings in the array, which we'll
+use to color the function's output.
+
+# the following two arrays elements wrap the
+# calculated date and dir in color escape codes
+dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
+d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+
+Now, the moment you've all been waiting for - the &$^%#$# prompt string!
+
+# set the prompt
+PS1="${lb}${dt[0]}\$(pdt)${dt[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+
+Let's break it down, piece by piece.
+
+${lb} is a string representing the left bracket character, wrapped
+with color escape codes. It's the bizzare output you saw in your
+terminal earlier, e.g. "\[\033[38;3;23m\][\[\033[0m\]" and it's used
+twice in this simple prompt.
+
+${dt[0]} is the color escape code for the date and time string,
+that's generated by 'pdt', the short alias for the prompt_date_time
+function found in the generic function lib. Notice that the '$'
+characters of the function calls are escaped with a '\' so that it's
+not evaluated now, but rather each time PS1 gets printed.
+
+${dt[1]} finalizes the coloration of the date and time by reseting the
+forground color back to normal. In command mode, (no -P) face generates
+a color code, sets that color 'active', prints your text, and then
+resets the code to normal on every invocation.
+
+The rest of the prompt is fairly self explanitory, as it follows the
+same rules as these vars and functions above.
+
+So, there you have it. Now go play and make some cool prompt themes
+and send them in for inclusion in bash-color-tools. Display latency
+can be a bitch if you go too crazy with embedded functions, but I can
+imagine that there's lots of things like cpu temp, wireless quality,
+number of active users on the box, etc., that can be easily put in a
+prompt. And now that changing prompts is as easy as 'prompt name',
+switching around between different ones is fast and painless. But
+that's for your imagination. Me, I need to go get another beer.
+
+Cheers,
+-C
+
+
+
+
+
+
+

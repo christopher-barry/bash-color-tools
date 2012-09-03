@@ -1,0 +1,98 @@
+bash-color-tools
+================================================================================
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+================================================================================
+
+INSTALLATION INSTRUCTIONS
+
+From cloned GitHub repo:
+~~~~~~~~~~~~~~~~~~~~~~~~
+To install bash-color-tools just run './install' from the cloned repo
+as root. This will install the absolute latest code system-wide, so
+everyone on the box can use it, each with their own personal settings.
+
+To install a particular version, use git describe to identify the
+available version tags, then checkout that tag to a branch with:
+
+me@box$ git checkout -b <tag_name>
+
+Then run ./install as root.
+
+
+From zipfile downloaded from GitHub:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+For a specific tagged release rather than master, select the tag in
+GitHub's interface, then select the Zip button and download it.
+
+Unzip it:
+
+me@box$ unzip bash-color-tools-<version>.zip
+
+...then install as root
+
+root@box# cd /path/to/bash-color-tools-<version>
+root@box# ./install
+
+By default, this will install the code to:
+
+ /usr/share/bash-color-tools/
+
+and the docs to:
+
+ /usr/share/doc/bash-color-tools/
+
+symlinks for the face and print-face-colors commands will be installed
+into /usr/bin/.
+
+
+OTHER INSTALL LOCATIONS
+
+If you perfer to install into a different install root than /usr, for
+instance to say /usr/local, or even your own home directory, set the
+PREFIX var prior to installing, like:
+
+ root@box# PREFIX=/usr/local ./install
+
+Or
+
+ me@box$ PREFIX=~ ./install
+
+NOTE: keep in mind that executables will have symlinks created in
+${PREFIX}/bin. If that bin dir is not in your path, stuff won't
+work. If it's not in the path, then add it to your startup script
+(e.g. ~/.bashrc) with:
+
+ PATH=${PATH}:/the/prefix/you/used/bin
+ export PATH
+
+install will bark at you after installing if that bin dir is not in
+the PATH
+
+
+UNINSTALLATION INSTRUCTIONS
+
+To uninstall, as root (typically) run the uninstall script located in
+the installation libexec directory, which by default is located at:
+
+root@box# /usr/share/bash-color-tools/libexec/uninstall
+
+You'll need to manually remove any personal dotfiles and themes in
+your home directory, located in ~/.prompt-themes.d/
+
+

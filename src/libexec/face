@@ -1,0 +1,227 @@
+#!/bin/bash
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# face
+#-------------------------------------------------------------------------------
+# face is a colorizing echo command/lib for bash
+#===============================================================================
+
+[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+    echo "Sorry, gotta have bash version >= 4 to run this."
+    exit 1
+}
+
+#-------------------------------------------------------------------------------
+# Usage
+function face_usage()
+{
+    echo >&2 "Usage:"
+    echo >&2 " ${0##*/} [<[OPTS] \"string\">|[libmode|colors]]"
+    echo >&2 " use: '${0##*/} -H' for color echo command usage"
+    echo >&2 " use: 'source /path/to/${0##*/} libmode' to use _face function in scripts"
+    echo >&2 " use: '${0##*/} [-v] colors' to print color pallettes and their rgb values"
+    return 0
+}
+
+#-------------------------------------------------------------------------------
+# color echo function
+function _face()
+{
+    OPTIND=
+    while getopts ":PHhlnef:b:" opt
+    do
+        case ${opt} in
+            n) local N=n
+                ;; # no newline
+            e) local E=e               ;; # escape message
+            f) local -l F=${OPTARG:-x} ;; # foreground rgb
+            b) local -l B=${OPTARG:-x} ;; # background rgb
+            l) local mode=lowcolor     ;; # low-color mode
+            P) local pmode=1           ;; # use additional escapes for prompt mode
+            H)                            # help
+                echo >&2 "USAGE: ${0##*/} [-h|-H] | [-P] [-l] [-n] [-e] [-f rgb] [-b rgb] \"message\""
+                echo >&2 "where r,g, and b are values between 1 and 5 inclusive"
+                echo >&2 "for example, ${0##*/} -f 555 -b 500 \" here is my message \" produces..."
+                ${0##*/} -f 555 -b 500 " here is my message "
+                echo >&2
+                echo >&2 "Or in low color mode for consoles..."
+                echo >&2 "${0##*/} -lf <fgnd_colorname> -b <bgnd_colorname> \"message\""
+                echo >&2 "where colorname is one of: white, black, red, green, blue, yellow, purple and gray"
+                echo >&2 "foreground colors can also use the 'bright' prefix modifier, as in 'brightred'"
+                echo >&2 "for example, ${0##*/} -lf white -b red \" here is my message \" produces..."
+                ${0##*/} -lf white -b red " here is my message "
+                echo >&2
+                echo >&2 "Note: use '-P' to generate specially escaped strings for \$PS1"
+                echo >&2
+                return 1
+                ;;
+            h) echo >&2 "USAGE: ${0##*/} [ [-h|-H] | [-P] [-l] [-n] [-e] [-f rgb] [-b rgb] \"message\" ]"; return 1 ;;
+            *) : ;;
+        esac
+    done
+    shift $((${OPTIND}-1))
+
+    # hicolor w/ rgb is the default mode
+    mode=${mode:-hicolor}
+    case ${mode} in
+
+        hicolor)
+            [[ ${pmode} ]] && {
+                # for PS1
+                local norm="\[\033[0m\]"
+            } || {
+                # for color echoing
+                local norm="\033[0m"
+            }
+            local -A C=(); C=( [white]=555 [red]=500 [green]=050 [blue]=005 [black]=000 [none]="${norm}" ) # TODO: match lowcolor names
+            local -A g=(); g=( [F]=3 [B]=4 )
+
+            function rgb2idx() { echo -n "$((16+${1:0:1}*36+${1:1:1}*6+${1:2:1}))m"; }
+
+            function color()
+            {
+                [[ ${pmode} ]] && {
+                    # for PS1
+                    echo -n "\[\033[${1}8;3;$(rgb2idx ${2})\]"
+                } || {
+                    # for color echoing
+                    echo -ne "\033[${1}8;3;$(rgb2idx ${2})"
+                }
+            }
+
+            # setup colors for next print
+            for i in ${F} ${B}
+            do
+                # rgb
+                [[ ${i} =~ ^[0-5]{3}$  ]] \
+                    && { [[ ${i} == ${F} ]] && color ${g[F]} ${F} || color ${g[B]} ${B}; }
+                # named color
+                [[ "${!C[@]}" =~ ${i} ]] \
+                    && { [[ ${i} == ${F} ]] && color ${g[F]} ${C[${i}]} || color ${g[B]} ${C[${i}]}; }
+            done
+            ;;
+
+        lowcolor) # console mode w/o framebuffer requires this mode [-l]
+            [[ ${pmode} ]] && {
+                # for PS1
+                local norm="\[\033[0;0;40m\033[0m\]"; echo -n "${norm}"
+                # forground
+                local -A fC=(); fC=(
+                    [white]='\[\033[1;37m\]'  [black]='\[\033[0;30m\]'
+                    [gray]='\[\033[1;30m\]'   [brightgray]='\[\033[0;37m\]'
+                    [red]='\[\033[0;31m\]'    [brightred]='\[\033[1;31m\]'
+                    [green]='\[\033[0;32m\]'  [brightgreen]='\[\033[1;32m\]'
+                    [yellow]='\[\033[0;33m\]' [brightyellow]='\[\033[1;33m\]'
+                    [blue]='\[\033[0;34m\]'   [brightblue]='\[\033[1;34m\]'
+                    [purple]='\[\033[0;35m\]' [brightpurple]='\[\033[1;35m\]'
+                    [cyan]='\[\033[0;36m\]'   [brightcyan]='\[\033[1;36m\]'
+                    [none]='\[\033[0;37m\]'
+                )
+                # background
+                local -A bC=(); bC=(
+                    [white]='\[\033[47m\]'    [black]='\[\033[40m\]'
+                    [red]='\[\033[41m\]'      [green]='\[\033[42m\]'
+                    [yellow]='\[\033[43m\]'   [blue]='\[\033[44m\]'
+                    [purple]='\[\033[45m\]'   [cyan]='\[\033[46m\]'
+                    [none]='\[\033[40m\]'
+                )
+            } || {
+                # for color echoing
+                local norm="\033[0;0;40m\033[0m"; echo -ne "${norm}"
+                # forground
+                local -A fC=(); fC=(
+                    [white]='\033[1;37m'  [black]='\033[0;30m'
+                    [gray]='\033[1;30m'   [brightgray]='\033[0;37m'
+                    [red]='\033[0;31m'    [brightred]='\033[1;31m'
+                    [green]='\033[0;32m'  [brightgreen]='\033[1;32m'
+                    [yellow]='\033[0;33m' [brightyellow]='\033[1;33m'
+                    [blue]='\033[0;34m'   [brightblue]='\033[1;34m'
+                    [purple]='\033[0;35m' [brightpurple]='\033[1;35m'
+                    [cyan]='\033[0;36m'   [brightcyan]='\033[1;36m'
+                    [none]='\033[0;37m'
+                )
+                # background
+                local -A bC=(); bC=(
+                    [white]='\033[47m'    [black]='\033[40m'
+                    [red]='\033[41m'      [green]='\033[42m'
+                    [yellow]='\033[43m'   [blue]='\033[44m'
+                    [purple]='\033[45m'   [cyan]='\033[46m'
+                    [none]='\033[40m'
+                )
+            }
+            [[ ${F} ]] && [[ "${!fC[@]}" =~ "${F}" ]] && fg="${fC[${F}]}"
+            [[ ${B} ]] && [[ "${!bC[@]}" =~ "${B}" ]] && bg="${bC[${B}]}"
+            [[ ${B} ]] || bg="${bC[none]}"
+            # setup colors for next print
+            [[ ${pmode} ]] && {
+                # for PS1
+                echo -n "${fg}${bg}"
+            } || {
+                # for color echoing
+                echo -ne "${fg}${bg}"
+            }
+            ;;
+    esac
+
+    echo -n ${E:+ -${E}} "${*}"
+    [[ ${pmode} ]] && {
+        # for PS1
+        echo ${N:+ -${N}} "${norm}"
+    } || {
+        # for color echoing
+        echo -e ${N:+ -${N}} "${norm}"
+    }
+    return 0
+}
+
+#===============================================================================
+# use as lib, color pallette demo, or simple colorizing echo command
+[[ "${1}" == "-v" ]] && { VERBOSE=1; shift; }
+case "${1}" in
+
+    "")
+        face_usage
+        ;;
+
+    libmode)
+        export -f _face
+        ;;
+
+    colors)
+        [[ -f ${0%/*}/print_${0##*/}_colors ]] && {
+            CMD_NAME=colors
+            source ${0%/*}/print_${0##*/}_colors
+            pallette
+        } || {
+            echo >&2 "cannot locate: '${0%/*}/print_${0##*/}_colors'"
+            echo >&2 "this file is required to generate color pallettes"
+            exit 1
+        }
+        ;;
+
+    *)
+        _face "${@}"
+        ;;
+esac
+
