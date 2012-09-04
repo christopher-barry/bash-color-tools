@@ -16,4 +16,12 @@ bash-color-tools changelog
 * fixed bug mis-named filename
 * updated changelog
 
+2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
+* new tag v0.9.4
+* add new theme 'giles'
+
+2012-9-04 Christopher Barry <christopher.r.barry@gmail.com>
+* fix README.commands .bashrc example
+* new tag v0.9.5
+
 

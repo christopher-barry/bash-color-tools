@@ -67,7 +67,7 @@ The following commands are part of the bash-color-tools:
   ==snip=========8<-------------------------
 
   # set prompt
-  if [ "$color_prompt" = yes ] && [[ "$(declare -F | grep _face)" ]]; then
+  if [ "$color_prompt" = yes ]; then
       # source color libs
       [[ -f /usr/share/bash-color-tools/libexec/face ]] && {
               source /usr/share/bash-color-tools/libexec/face libmode
