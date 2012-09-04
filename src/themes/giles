@@ -1,0 +1,129 @@
+# -*- mode: sh; -*-
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# giles
+#-------------------------------------------------------------------------------
+# homage to Giles Orr, with a little git thrown in
+#===============================================================================
+
+THEME=giles
+
+#===============================================================================
+# 'prompt giles'
+# (@mybox)-(12:34 / Mon Nov 27)
+# [master][...src/apps/]::
+function prompt_giles_theme()
+{
+    # override and customize defaults with dotfile
+    [[ -f ~/.prompt-themes.d/conf/${THEME}.theme ]] || {
+        mkdir -p ~/.prompt-themes.d/conf
+        cat > ~/.prompt-themes.d/conf/${THEME}.theme <<EOF
+# default ${THEME} theme settings for prompt
+#
+# max length of path to display
+PROMPT_MAXPATHLEN=14
+
+# max length of branch name to display
+PROMPT_MAXBRANCHLEN=10
+
+# run 'face -v colors' for rgb pallette output
+# to see what color == what rgb value
+#
+# default color rgb values for prompt elements
+PROMPT_BRKT_CLR=122
+PROMPT_PAREN_CLR=233
+PROMPT_DASH_CLR=122
+PROMPT_SLASH_CLR=122
+PROMPT_TIME_CLR=012
+PROMPT_DATE_CLR=012
+PROMPT_AT_CLR=432
+PROMPT_HOST_CLR=321
+PROMPT_GITBRANCH_CLR=210
+PROMPT_DIR_CLR=013
+PROMPT_SYM_CLR=122
+
+# default prompt elements
+PROMPT_NOGIT_CHAR='-'
+PROMPT_LBRKT_CHAR='['
+PROMPT_RBRKT_CHAR=']'
+PROMPT_LPAREN_CHAR='('
+PROMPT_RPAREN_CHAR=')'
+PROMPT_DASH_CHAR='-'
+PROMPT_SLASH_CHAR='/'
+PROMPT_AT_CHAR='@'
+
+[[ \$(id -u) -eq 0 ]] && {
+    PROMPT_SYM_CHAR='# '
+} || {
+    PROMPT_SYM_CHAR=':: '
+}
+
+EOF
+
+       echo "edit ~/.prompt-themes.d/conf/${THEME}.theme to modify colors, etc."
+    }
+    source ~/.prompt-themes.d/conf/${THEME}.theme
+
+    return 0
+}
+#
+function prompt_git_branch()
+{
+    if [[ "$(git branch 2>/dev/null)" =~ [*][[:blank:]]([-a-zA-Z0-9_. ]+) ]]
+    then
+        gb="${BASH_REMATCH[1]}"
+        prompt_truncate ${PROMPT_MAXBRANCHLEN} "${gb}"
+    else
+        prompt_truncate ${PROMPT_MAXBRANCHLEN} "${PROMPT_NOGIT_CHAR}"
+    fi
+
+    return 0
+}
+# short alias
+function pgb() { prompt_git_branch "${@}"; }
+
+# init globals
+prompt_giles_theme
+
+# set colors
+lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+lp="$(_face -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
+rp="$(_face -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
+da="$(_face -Pnf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
+sl="$(_face -Pnf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
+at="$(_face -Pnf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
+sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+
+# the following arrays elements wrap the
+# calculated values in color escape codes
+h=( $(_face -Pnf ${PROMPT_HOST_CLR} " ") )
+tm=( $(_face -Pnf ${PROMPT_TIME_CLR} " ") )
+dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
+b=( $(_face -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
+d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+
+# set the prompt
+PS1="${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+
