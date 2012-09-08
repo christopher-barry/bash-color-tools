@@ -56,7 +56,9 @@ function prompt()
         return 0
     }
 
-    # find the specified theme, personal version first
+    # find and load the specified theme in following order.
+    # personal, standard, then contrib version
+    # first found with same name wins
     if [[ -f ~/.prompt-themes.d/${1} ]]; then
         source ~/.prompt-themes.d/${1}
     elif [[ -f ${THEME_DIR}/${1} ]]; then
