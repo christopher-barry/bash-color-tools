@@ -73,7 +73,7 @@ PROMPT_DASH_CHAR='-'
 PROMPT_SLASH_CHAR='/'
 PROMPT_AT_CHAR='@'
 
-[[ \$(id -u) -eq 0 ]] && {
+(( \$(id -u) == 0 )) && {
     PROMPT_SYM_CHAR='# '
 } || {
     PROMPT_SYM_CHAR=':: '

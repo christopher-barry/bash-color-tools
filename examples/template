@@ -55,7 +55,7 @@ PROMPT_SYM_CLR=133
 # default prompt elements
 PROMPT_LBRKT_CHAR='['
 PROMPT_RBRKT_CHAR=']'
-[[ \$(id -u) -eq 0 ]] && {
+(( \$(id -u) == 0 )) && {
     PROMPT_SYM_CHAR='# '
 } || {
     PROMPT_SYM_CHAR='\$ '
