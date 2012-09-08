@@ -30,7 +30,7 @@ LICENSE
 # dumps a bunch of colored blocks and shows the rgb numbers to produce them.
 #===============================================================================
 
-[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+(( ${BASH_VERSINFO:-0} >= 4 )) || {
     echo "Sorry, gotta have bash version >= 4 to run this."
     exit 1
 }
@@ -44,15 +44,15 @@ function pallette()
     local r=1 g=1 b=1
     echo "       Primary Pallette"
 
-    until [[ ${r} -eq 6 ]]; do
+    until (( ${r} == 6 )); do
         pallette_row ${r}00
         ((r++))
     done
-    until [[ ${g} -eq 6 ]]; do
+    until (( ${g} == 6 )); do
         pallette_row 0${g}0
         ((g++))
     done
-    until [[ ${b} -eq 6 ]]; do
+    until (( ${b} == 6 )); do
         pallette_row 00${b}
         ((b++))
     done
@@ -61,19 +61,19 @@ function pallette()
     echo "      Secondary Pallette"
 
     local r=1 g=0 b=1
-    until [[ ${b} -eq 6 ]]; do
+    until (( ${b} == 6 )); do
         pallette_row ${r}0${b}
         ((r++))
         ((b++))
     done
     local r=1 g=1 b=0
-    until [[ ${r} -eq 6 ]]; do
+    until (( ${r} == 6 )); do
         pallette_row ${r}${g}0
         ((r++))
         ((g++))
     done
     local r=0 g=1 b=1
-    until [[ ${g} -eq 6 ]]; do
+    until (( ${g} == 6 )); do
         pallette_row 0${g}${b}
         ((g++))
         ((b++))
@@ -150,23 +150,23 @@ function pallette_row()
     local b=${rgb:2:1}
     local -a a_rgb=()
 
-    until [[ ${r} -eq 0 || ${g} -eq 0 || ${b} -eq 0 ]]; do
-        [[ ${r} -gt 0 ]] && ((r--))
-        [[ ${g} -gt 0 ]] && ((g--))
-        [[ ${b} -gt 0 ]] && ((b--))
+    until (( ${r} == 0 )) || (( ${g} == 0 )) || (( ${b} == 0 )); do
+        (( ${r} > 0 )) && ((r--))
+        (( ${g} > 0 )) && ((g--))
+        (( ${b} > 0 )) && ((b--))
     done
 
     a_rgb=( ${r}${g}${b} )
 
-    until [[ ${r}${g}${b} -eq 555 ]]; do
-        [[ ${r} -lt 5 ]] && ((r++))
-        [[ ${g} -lt 5 ]] && ((g++))
-        [[ ${b} -lt 5 ]] && ((b++))
+    until (( ${r}${g}${b} == 555 )); do
+        (( ${r} < 5 )) && ((r++))
+        (( ${g} < 5 )) && ((g++))
+        (( ${b} < 5 )) && ((b++))
         a_rgb+=( ${r}${g}${b} )
     done
 
     [[ ${VERBOSE} ]] && {
-        for (( c=0; c<${#a_rgb[@]}; c++ )); do
+        for (( c=0; c < ${#a_rgb[@]}; c++ )); do
             echo -n " ${a_rgb[c]} "
         done
         echo

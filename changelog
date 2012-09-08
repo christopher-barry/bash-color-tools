@@ -24,4 +24,10 @@ bash-color-tools changelog
 * fix README.commands .bashrc example
 * new tag v0.9.5
 
+2012-9-08 Christopher Barry <christopher.r.barry@gmail.com>
+* fix README.commands .bashrc example - again
+* minor tweaks
+* modify all numeric tests to use (( ... )) construct
+
+
 

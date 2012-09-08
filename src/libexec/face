@@ -27,7 +27,7 @@ LICENSE
 # face is a colorizing echo command/lib for bash
 #===============================================================================
 
-[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+(( ${BASH_VERSINFO:-0} >= 4 )) || {
     echo "Sorry, gotta have bash version >= 4 to run this."
     exit 1
 }

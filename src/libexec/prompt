@@ -27,7 +27,7 @@ LICENSE
 # generate theme-able and customizable shell prompts
 #===============================================================================
 
-[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+(( ${BASH_VERSINFO:-0} >= 4 )) || {
     echo "Sorry, gotta have bash version >= 4 to run this."
     exit 1
 }
@@ -39,7 +39,7 @@ export  THEME_DIR
 # set the prompt
 function prompt()
 {
-    [[ ${#} -eq 0 ]] && { echo "Usage: prompt <theme_name|list>"; return 1; }
+    (( ${#} == 0 )) && { echo "Usage: prompt <theme_name|list>"; return 1; }
 
     # make various functions accessible to all themes
     [[ -f ${THEME_DIR%/*}/libexec/functions ]] && {
@@ -78,7 +78,7 @@ function prompt()
         PROMPT_HOST_CLR=011
         PROMPT_DIR_CLR=135
         PROMPT_SYM_CLR=025
-        [[ $(id -u) -eq 0 ]] && {
+        (( $(id -u) == 0 )) && {
             PROMPT_SYM_CHAR='# '
         } || {
             PROMPT_SYM_CHAR='$ '

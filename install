@@ -27,7 +27,7 @@ LICENSE
 # installation script for bash-color-tools
 #===============================================================================
 
-[[ ${BASH_VERSINFO:-0} -ge 4 ]] || {
+(( ${BASH_VERSINFO:-0} >= 4 )) || {
     echo "Sorry, gotta have bash version >= 4 to run bash-color-tools."
     exit 1
 }

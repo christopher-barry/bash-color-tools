@@ -60,10 +60,10 @@ function pdt() { prompt_date_time; }
 # prompt_truncate <length> <"string">
 function prompt_truncate()
 {
-    [[ ${#} -ge 2 ]] || { echo "${FUNCNAME}: bad arglist: '${@}'"; return 1; }
+    (( ${#} >= 2 )) || { echo "${FUNCNAME}: bad arglist: '${@}'"; return 1; }
     local len=${1}; shift
     local str="${*}"
-    [[ ${#str} -le ${len} || ${len} -le 0 ]] && {
+    (( ${#str} <= ${len} )) || (( ${len} <= 0 )) && {
         echo "${str}"
     } || {
         echo "...${str: -${len}}"
@@ -83,7 +83,7 @@ function prompt_theme_list()
         echo
         echo " Personal Themes: ~/.prompt-themes.d/"
         local -a p_theme=( $(ls -1 ~/.prompt-themes.d | grep -v conf) )
-        [[ ${#p_theme[@]} -gt 0 ]] || p_theme=( 'none available' )
+        (( ${#p_theme[@]} > 0 )) || p_theme=( 'none available' )
         printf " * %s\n" "${p_theme[@]}"
     }
 
@@ -91,7 +91,7 @@ function prompt_theme_list()
         echo
         echo " Standard Themes: ${THEME_DIR}/"
         local -a s_theme=( $(ls -1 ${THEME_DIR}/) )
-        [[ ${#s_theme[@]} -gt 0 ]] || s_theme=( 'none available' )
+        (( ${#s_theme[@]} > 0 )) || s_theme=( 'none available' )
         printf " * %s\n" "${s_theme[@]}"
     } || return 1
 
@@ -99,7 +99,7 @@ function prompt_theme_list()
         echo
         echo " Contrib Themes: ${THEME_DIR%/*}/contrib"
         local -a p_theme=( $(ls -1 ${THEME_DIR%/*}/contrib) )
-        [[ ${#p_theme[@]} -gt 0 ]] || p_theme=( 'none available' )
+        (( ${#p_theme[@]} > 0 )) || p_theme=( 'none available' )
         printf " * %s\n" "${p_theme[@]}"
     }
 
