@@ -44,8 +44,16 @@ function prompt_giles_theme()
 # max length of path to display
 PROMPT_MAXPATHLEN=14
 
+# amount of fuzz around max path length
+# to allow cutting a path to land on a '/'
+PROMPT_DIR_FUZZFACTOR=8
+
 # max length of branch name to display
 PROMPT_MAXBRANCHLEN=10
+
+# amount of fuzz around max branch length
+# to allow cutting a path to land on a '_'
+PROMPT_BRANCH_FUZZFACTOR=4
 
 # run 'face -v colors' for rgb pallette output
 # to see what color == what rgb value
@@ -72,6 +80,7 @@ PROMPT_RPAREN_CHAR=')'
 PROMPT_DASH_CHAR='-'
 PROMPT_SLASH_CHAR='/'
 PROMPT_AT_CHAR='@'
+PROMPT_BRANCH_DELIM='_'
 
 (( \$(id -u) == 0 )) && {
     PROMPT_SYM_CHAR='# '
@@ -88,20 +97,20 @@ EOF
     return 0
 }
 #
-function prompt_git_branch()
+function prompt_git_fuzzy_branch()
 {
     if [[ "$(git branch 2>/dev/null)" =~ [*][[:blank:]]([-a-zA-Z0-9_. ]+) ]]
     then
         gb="${BASH_REMATCH[1]}"
-        prompt_truncate ${PROMPT_MAXBRANCHLEN} "${gb}"
+        prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${gb}"
     else
-        prompt_truncate ${PROMPT_MAXBRANCHLEN} "${PROMPT_NOGIT_CHAR}"
+        prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${PROMPT_NOGIT_CHAR}"
     fi
 
     return 0
 }
 # short alias
-function pgb() { prompt_git_branch "${@}"; }
+function pgfb() { prompt_git_fuzzy_branch "${@}"; }
 
 # init globals
 prompt_giles_theme
@@ -125,5 +134,5 @@ b=( $(_face -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
 d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+PS1="${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
 
