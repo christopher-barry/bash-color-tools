@@ -1,0 +1,113 @@
+bash-color-tools
+================================================================================
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+================================================================================
+
+How It All Works
+~~~~~~~~~~~~~~~~
+
+bash-color-tools is essentially two major components:
+
+* face   - which is a colorizing echo command, and
+* prompt - which is a plugin-based theme-able color prompt framework.
+
+
+face
+~~~~
+face works like echo, but in hundreds of colors.
+face can be run standalone as a simple command:
+
+If you've installed bash-color-tools, cut and paste these in your
+terminal to see what they do:
+
+ face -f 555 -b 500 "   WARNING!   "
+ face -f 050 "Success"
+ face -f 540 "this is a string with forground color"
+ face -f 540 -b 300 "this is a string with forground and background color"
+color ---^^^----^^^- is represented as an 'rgb' value triplet. In light,
+the three primary colors are Red, Green and Blue (rgb).
+
+-f <rgb> sets forground color
+-b <rgb> sets background color
+Use -H for more help with face
+
+540 means red=5,green=4,blue=0. Each of r, g and b can be a value of 0
+thru 5, e.g. r=(0 thru 5), g=(0 thru 5) and b=(0 thru 5), so the total
+range is 000 (black) to 555 (white). The displayed color is the
+*combination* of those color three values - just light mixing colored
+light (not paint!). Try adjusting the rgb values of the examples above
+in your terminal to see how the colors change.
+
+Run the following to show a (non-exhaustive) demo of various colors
+and their associated 'rgb' values:
+
+ face -v colors
+
+
+Using face in scripts
+~~~~~~~~~~~~~~~~~~~~~
+face can also be used as a library, meaning it's function can be kept
+in the environment so it works faster. To do this, it's sourced with
+the 'libmode' parameter:
+
+ source /path/to/face libmode
+
+Then, from your scripts it's called using function '_face' instead of
+the script file 'face'. All of the same options apply (see face -H).
+
+
+prompt
+~~~~~~
+
+prompt uses face as it's core library to create hi-color bash shell
+prompts. In normal 'echo' mode, face produces terminal 'escape'
+sequences that generate color directly in the terminal. In 'prompt
+string' mode (-P), face produces specially escaped strings that can be
+assigned to the PS1 variable. The shell writes the contents of the PS1
+variable to the screen each time enter is pressed. A typical prompt
+looks like:
+
+user@host:/some/directory$
+
+A prompt generated using 'prompt' can be in any color or combination
+of colors, and generally include other handy infomation as well, such as:
+* date / time
+* current git branch
+* auto-trimmed current directory name
+
+Here's an example of the 'giles' prompt theme:
+
+(@monolith)-(08:39 / Tue Sep 11)
+[-][~]:: cd src/bash-color-tools/
+(@monolith)-(08:39 / Tue Sep 11)
+[master][.../src/bash-color-tools]::
+
+It's a two-line prompt theme, and it looks a little bit 'busy' without
+color here in this file. Notice that before I changed directories,
+the basic cmdline portion looked like:
+
+[-][~]::
+
+then, after I went into a git source-controlled directory, it changed
+to:
+
+[master][.../src/bash-color-tools]::
+
+Notice also that the current directory portion has been trimmed to
+keep it at a resonable length. This is a tunable length that is set in
