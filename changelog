@@ -29,5 +29,14 @@ bash-color-tools changelog
 * minor tweaks
 * modify all numeric tests to use (( ... )) construct
 
+2012-9-12 Christopher Barry <christopher.r.barry@gmail.com>
+* add quick start section to INSTALL
+* refactor theme list printing
+* refactor prompt(), adding 'save' feature
+* complete draft of how-it-works
+* created 'setup-prompt' command to automate user configuration
+* moved CUSTOMIZING into ./examples/
+* new tag v0.9.7
+
 
 
