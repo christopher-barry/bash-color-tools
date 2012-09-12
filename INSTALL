@@ -19,7 +19,17 @@ bash-color-tools
 
 ================================================================================
 
-INSTALLATION INSTRUCTIONS
+QUICK START
+
+* get code (git or tarball)
+* as root, run:
+  root@box# /path/to/code/install
+* then, as each user that wants a color prompt, run:
+  user@box$ setup-prompt
+* follow instructions printed on the screen
+
+
+DETAILED INSTALLATION INSTRUCTIONS
 
 From cloned GitHub repo:
 ~~~~~~~~~~~~~~~~~~~~~~~~
