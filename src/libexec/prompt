@@ -39,7 +39,11 @@ export  THEME_DIR
 # set the prompt
 function prompt()
 {
-    (( ${#} == 0 )) && { echo "Usage: prompt <theme_name|list>"; return 1; }
+    (( ${#} == 0 )) && {
+        echo "Usage: prompt <theme_name|list|save>"
+        echo "'prompt save' to modify ~/.bashrc to autostart current theme"
+        return 1
+    }
 
     # make various functions accessible to all themes
     [[ -f ${THEME_DIR%/*}/libexec/functions ]] && {
@@ -48,13 +52,25 @@ function prompt()
         echo "${THEME_DIR%/*}/libexec/functions lib missing. cannot continue."
         return 1
     }
-    [[ "${1}" == "list" ]] && {
-        prompt_theme_list || {
-            echo "hmm. no themes appear to be installed. try re-installing."
-            return 1
-        }
-        return 0
-    }
+    case ${1} in
+
+        list)
+            prompt_theme_list || {
+                echo "hmm. no themes appear to be installed. try re-installing."
+                return 1
+            }
+            return 0
+            ;;
+
+        save)
+            prompt_save_to_bashrc || {
+                echo "unable to save settings to ~/.bashrc"
+                return 1
+            }
+            echo "theme '${THEME:-builtin}' is set to autostart"
+            return 0
+            ;;
+    esac
 
     # find and load the specified theme in following order.
     # personal, standard, then contrib version
@@ -67,9 +83,11 @@ function prompt()
         source ${THEME_DIR%/*}/contrib/${1}
     else
         THEME=builtin
-        echo "theme '${1}' not found. using builtin defaults."
-        echo "use 'prompt list' to view available themes"
-        echo "see CUSTOMIZING for how to customize"
+        [[ "${1}" != "${THEME}" ]] && {
+            echo "theme '${1}' not found. using builtin defaults."
+            echo "use 'prompt list' to view available themes"
+            echo "see CUSTOMIZING for how to customize"
+        }
         # max length of path to display
         PROMPT_MAXPATHLEN=20
         # default color rgb for prompt elements
@@ -98,3 +116,5 @@ function prompt()
     fi
 
 }
+
+export -f prompt
