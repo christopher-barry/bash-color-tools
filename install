@@ -81,6 +81,15 @@ function _uninstall_()
         rm -rf ${inst_prefix}/share/doc/bash-color-tools
     }
 
+    [[ -f /etc/profile.d/bash-color-tools.sh ]] && rm -f /etc/profile.d/bash-color-tools.sh
+
+    # remove all functions and vars from environment
+    unset -f $(typeset -F | grep prompt_ | cut -d' ' -f3) 2>/dev/null
+    unset $(set | grep PROMPT_ | awk -F= '{ print $1 }')  2>/dev/null
+    unset THEME THEME_DIR
+
+    sed -i "s,^\([ ]*prompt[[:blank:]][-a-zA-Z0-9._]*$\),#\1,"  ~/.bashrc
+
     return 0
 }
 
@@ -93,6 +102,7 @@ function _install_links_()
         cd ${inst_prefix}/bin
         ln -sf ${inst_prefix}/share/bash-color-tools/libexec/face || return 1
         ln -sf ${inst_prefix}/share/bash-color-tools/libexec/print-face-colors || return 1
+        ln -sf ${inst_prefix}/share/bash-color-tools/libexec/install setup-prompt || return 1
     )
 }
 
@@ -102,6 +112,7 @@ function _uninstall_links_()
     local inst_prefix=${1}
     [[ -f ${inst_prefix}/bin/face ]] && rm -f ${inst_prefix}/bin/face
     [[ -f ${inst_prefix}/bin/print-face-colors ]] && rm -f ${inst_prefix}/bin/print-face-colors
+    [[ -f ${inst_prefix}/bin/setup-prompt ]] && rm -f ${inst_prefix}/bin/setup-prompt
 }
 
 #-------------------------------------------------------------------------------
@@ -113,13 +124,78 @@ function _set_themes_dir_()
 }
 
 #-------------------------------------------------------------------------------
-# make sure we can access this prefix location
-function verify_permissions()
+function _setup_etc_profile_()
 {
     local inst_prefix=${1}
-    local tstfn=${RANDOM}-${RANDOM}-${RANDOM}
-    touch ${PREFIX}/${tstfn} 2>/dev/null && {
-        rm -f ${PREFIX}/${tstfn}
+
+    if _verify_permissions_ /etc/profile.d; then
+        # we can setup global source of libs
+        cat > /etc/profile.d/bash-color-tools.sh <<EOF
+#!/bin/bash
+# source bash-color-tools libraries
+# for prompt and _face() usage
+BCT=${inst_prefix}/share/bash-color-tools/libexec
+if [[ -f \${BCT}/face && -f \${BCT}/prompt ]]; then
+    # source bash-color-tools libs
+    source \${BCT}/face libmode
+    source \${BCT}/prompt
+fi
+
+EOF
+        return 0
+    else
+        return 1
+    fi
+}
+
+#-------------------------------------------------------------------------------
+function _setup_bashrc_()
+{
+    local inst_prefix=${1}
+
+    [[ $(grep 'source.*/face\ libmode' ~/.bashrc) ]] || {
+        cat >> ~/.bashrc <<EOF
+#
+# source bash-color-tools libraries
+# for prompt and _face() usage
+BCT=${inst_prefix}/share/bash-color-tools/libexec
+if [[ -f \${BCT}/face && -f \${BCT}/prompt ]]; then
+    # source bash-color-tools libs
+    source \${BCT}/face libmode
+    source \${BCT}/prompt
+fi
+# uncomment and select the theme you want here
+# to have prompt autostart with each shell
+#prompt git
+
+EOF
+    }
+}
+
+#-------------------------------------------------------------------------------
+function _welcome_output_()
+{
+    local inst_prefix=${1}
+
+    ${inst_prefix}/bin/face -f 042 "bash-color-tools are installed"
+    ${inst_prefix}/bin/face -nf 015 "see "
+    ${inst_prefix}/bin/face -nf 033 "${inst_prefix}/share/doc/bash-color-tools/* "
+    ${inst_prefix}/bin/face -f 015 "for more info"
+    ${inst_prefix}/bin/face -nf 015 "run: "
+    ${inst_prefix}/bin/face -nf 033 ". ~/.bashrc"
+    ${inst_prefix}/bin/face -nf 015 " to load the libs, then run: "
+    ${inst_prefix}/bin/face -f 033 "prompt list"
+    ${inst_prefix}/bin/face -f 015 "for a list of available prompt themes"
+}
+
+#-------------------------------------------------------------------------------
+# make sure we can access this prefix location
+function _verify_permissions_()
+{
+    local inst_prefix=${1}
+    local tstfn="${inst_prefix}/${RANDOM}-${RANDOM}-${RANDOM}"
+    touch "${tstfn}" 2>/dev/null && {
+        rm -f "${tstfn}"
     } || {
         return 1
     }
@@ -133,7 +209,7 @@ function verify_permissions()
 case ${0##*/} in
 
     install)
-        verify_permissions ${PREFIX} || {
+        _verify_permissions_ ${PREFIX} || {
             echo "Oops! you do not have permission to install into ${PREFIX}."
             echo "use sudo, or: 'PREFIX=/some/other/dir ./install' for non-privileged installations"
             exit 1
@@ -142,10 +218,14 @@ case ${0##*/} in
         _install_ ${PREFIX} || { echo "installation failed."; exit 1; }
         _install_links_ ${PREFIX} || { echo "installation of links failed."; exit 1; }
         _set_themes_dir_ ${PREFIX} || { echo "configuring prompt themes directory failed."; exit 1; }
-        ${PREFIX}/bin/face -f 020 "bash-color-tools are installed"
-        ${PREFIX}/bin/face -nf 321 "see "
-        ${PREFIX}/bin/face -nf 310 "${PREFIX}/share/doc/bash-color-tools/* "
-        ${PREFIX}/bin/face -f 321 "for more info"
+        _setup_etc_profile_ ${PREFIX} || {
+            echo "permissions prevent installing global settings in:"
+            echo "/etc/profile.d/bash-color-tools.sh"
+        }
+        _setup_bashrc_ ${PREFIX}
+        _welcome_output_ ${PREFIX}
+        echo
+        ${PREFIX}/bin/face -f 015 "run: 'setup-prompt' as each user to set prompt to autostart"
         [[ "$(which print-face-colors)" ]] || {
             ${PREFIX}/bin/face -f red "dont forget to add '${PREFIX}/bin' to your PATH variable in ~/.bashrc"
         }
@@ -154,7 +234,7 @@ case ${0##*/} in
     uninstall)
         PREFIX=$(echo ${0} | sed 's,/share/bash-color-tools/libexec/uninstall,,')
         [[ -f ${PREFIX}/share/doc/bash-color-tools/MANIFEST ]] || { echo "bash-color-tools is not correctly installed in ${PREFIX}/share. quitting."; exit 1; }
-        verify_permissions ${PREFIX} || { echo "you do not have permission to uninstall from ${PREFIX}."; exit 1; }
+        _verify_permissions_ ${PREFIX} || { echo "you do not have permission to uninstall from ${PREFIX}."; exit 1; }
         (
             cd /tmp
             _uninstall_links_ ${PREFIX} || { echo "uninstallation of links failed."; exit 1; }
@@ -162,5 +242,12 @@ case ${0##*/} in
             echo "bash-color-tools have been uninstalled"
         )
         ;;
+
+    setup-prompt)
+        PREFIX=$(echo ${0} | sed 's,/bin/setup-prompt,,')
+        _setup_bashrc_ ${PREFIX}
+        _welcome_output_ ${PREFIX}
+        ;;
+
 esac
 

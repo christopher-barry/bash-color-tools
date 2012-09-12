@@ -41,49 +41,23 @@ The following commands are part of the bash-color-tools:
 
   face and prompt work together to provide themeable colorized prompts.
 
-  To use it, do the following after installing bash-color-tools:
+  If you've installed bash-color-tools as root for use system-wide
+  (recommended), each user should run: setup-prompt to get started.
 
-  In your ~/.bashrc, add the following code:
 
-  # source color lib
-  [[ -f /usr/share/bash-color-tools/libexec/face ]] && {
-     source /usr/share/bash-color-tools/libexec/face libmode
-  }
-  # source prompt framework
-  [[ -f /usr/share/bash-color-tools/libexec/prompt ]] && {
-     source /usr/share/bash-color-tools/libexec/prompt
-  }
+* setup-prompt
 
-  This will place the functions needed into the environment.
+  setup-prompt adds a few lines of code to your .bashrc file that do
+  the following:
 
-  Then run 'prompt list' on the commandline to see available prompt
-  themes. Type 'prompt <theme_name>' to load one. To have the prompt
-  start automatically with each shell, add 'prompt <theme_name>' below
-  the lines sourcing the libs above in your .bashrc file.
+    * sources the face colorizing functions
+    * sources the prompt function framework
+    * adds a commented out 'prompt' line for auto-starting prompt
 
-  For debian boxen, you can modify code already in your .bashrc.
-  Here's what mine looks like:
+  Follow the instructions printed after running setup-prompt as a
+  user, once bash-color-tools has been successfully installed.
 
-  ==snip=========8<-------------------------
 
-# set prompt
-if [ "$color_prompt" = yes ]; then
-    # set installed path to bash-color-tools face and prompt
-    BCT=/usr/share/bash-color-tools/libexec
-    if [[ -f ${BCT}/face && -f ${BCT}/prompt ]]; then
-	# source bash-color-tools libs
-	source ${BCT}/face libmode
-	source ${BCT}/prompt
-        # set bct prompt
-	prompt git
-    else
-        # set debian color prompt
-        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-    fi
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
 
 
 
