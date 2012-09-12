@@ -28,7 +28,7 @@ LICENSE
 #===============================================================================
 
 #===============================================================================
-# prompt functions embedded in PS1 string, marked by a short alias
+# prompt functions embedded in PS1 string, marked by a 'short alias'
 #===============================================================================
 
 #-------------------------------------------------------------------------------
@@ -122,44 +122,67 @@ function prompt_fuzzy_truncate()
     return 0
 }
 
+
+#-------------------------------------------------------------------------------
+# Utilities / prompt commands
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+function prompt_print_theme_list()
+{
+    echo
+    _face -nf 012 "${1} "
+    _face -f 111 "${2}"
+    local -a p_theme=( $(ls -1 ${2} | grep -v conf) )
+    (( ${#p_theme[@]} > 0 )) || p_theme=( 'none available' )
+    printf "$(_face -f 013 "*") %s\n" "${p_theme[@]}"
+}
+
 #-------------------------------------------------------------------------------
 # generate list of installed themes
 function prompt_theme_list()
 {
-    echo "Current Theme:"
-    echo "* ${THEME:-none active}"
-    echo
-    echo "Available Themes"
-    echo "~~~~~~~~~~~~~~~~"
+    _face -f 030 "Current:"
+    _face -nf 030 "*"; _face -f 030 " ${THEME:-none active}"
+
     [[ -d ~/.prompt-themes.d ]] && {
-        echo
-        echo " Personal Themes: ~/.prompt-themes.d/"
-        local -a p_theme=( $(ls -1 ~/.prompt-themes.d | grep -v conf) )
-        (( ${#p_theme[@]} > 0 )) || p_theme=( 'none available' )
-        printf " * %s\n" "${p_theme[@]}"
+        prompt_print_theme_list "Personal:" ~/.prompt-themes.d/
     }
-
     [[ -d ${THEME_DIR} ]] && {
-        echo
-        echo " Standard Themes: ${THEME_DIR}/"
-        local -a s_theme=( $(ls -1 ${THEME_DIR}/) )
-        (( ${#s_theme[@]} > 0 )) || s_theme=( 'none available' )
-        printf " * %s\n" "${s_theme[@]}"
+        prompt_print_theme_list "Standard:" "${THEME_DIR}/"
     } || return 1
-
     [[ -d ${THEME_DIR%/*}/contrib ]] && {
-        echo
-        echo " Contrib Themes: ${THEME_DIR%/*}/contrib"
-        local -a p_theme=( $(ls -1 ${THEME_DIR%/*}/contrib) )
-        (( ${#p_theme[@]} > 0 )) || p_theme=( 'none available' )
-        printf " * %s\n" "${p_theme[@]}"
+        prompt_print_theme_list "Contrib:" "${THEME_DIR%/*}/contrib/"
     }
-
     echo
-    echo "run: 'prompt <theme_name>' to set theme."
-    echo "edit ~/.prompt-themes.d/conf/<theme_name>.theme to customize theme colors"
+    _face -f 222 "run: 'prompt <theme_name>' to set theme."
+    _face -f 222 "run: 'prompt save' to set current theme as default."
+    _face -f 222 "edit: ~/.prompt-themes.d/conf/<theme_name>.theme to customize theme colors"
+    echo
 
     return 0
 }
 
+#-------------------------------------------------------------------------------
+function prompt_save_to_bashrc()
+{
+    local inst_prefix=$(echo ${THEME_DIR} | sed 's,/share/bash-color-tools/themes,,')
+
+    [[ $(grep 'source.*/face\ libmode' ~/.bashrc) ]] || {
+        cat >> ~/.bashrc <<EOF
+#
+# source bash-color-tools libraries
+# for prompt and _face() usage
+BCT=${inst_prefix}/share/bash-color-tools/libexec
+if [[ -f \${BCT}/face && -f \${BCT}/prompt ]]; then
+    # source bash-color-tools libs
+    source \${BCT}/face libmode
+    source \${BCT}/prompt
+fi
+#prompt builtin
+
+EOF
+    }
+    sed -i "s,^[ #]*prompt[[:blank:]][-a-zA-Z0-9._]*$,prompt ${THEME:-builtin},"  ~/.bashrc
+}
 
