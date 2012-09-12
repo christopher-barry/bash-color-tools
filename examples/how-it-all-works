@@ -24,16 +24,16 @@ How It All Works
 
 bash-color-tools is essentially two major components:
 
-* face   - which is a colorizing echo command, and
-* prompt - which is a plugin-based theme-able color prompt framework.
+* face   - a colorizing echo command, and
+* prompt - a plugin-based, theme-able, bash shell color prompt framework.
 
 
 face
 ~~~~
 face works like echo, but in hundreds of colors.
-face can be run standalone as a simple command:
+face can be run standalone as a simple command.
 
-If you've installed bash-color-tools, cut and paste these in your
+If you've installed bash-color-tools, cut and paste these into your
 terminal to see what they do:
 
  face -f 555 -b 500 "   WARNING!   "
@@ -50,7 +50,7 @@ Use -H for more help with face
 540 means red=5,green=4,blue=0. Each of r, g and b can be a value of 0
 thru 5, e.g. r=(0 thru 5), g=(0 thru 5) and b=(0 thru 5), so the total
 range is 000 (black) to 555 (white). The displayed color is the
-*combination* of those color three values - just light mixing colored
+*combination* of those three color values - just like mixing colored
 light (not paint!). Try adjusting the rgb values of the examples above
 in your terminal to see how the colors change.
 
@@ -68,13 +68,14 @@ the 'libmode' parameter:
 
  source /path/to/face libmode
 
-Then, from your scripts it's called using function '_face' instead of
-the script file 'face'. All of the same options apply (see face -H).
+Then, from your scripts it's called using the function name '_face'
+instead of the script file name 'face'. All of the same options apply
+(see face -H for details).
+
 
 
 prompt
 ~~~~~~
-
 prompt uses face as it's core library to create hi-color bash shell
 prompts. In normal 'echo' mode, face produces terminal 'escape'
 sequences that generate color directly in the terminal. In 'prompt
@@ -86,16 +87,17 @@ looks like:
 user@host:/some/directory$
 
 A prompt generated using 'prompt' can be in any color or combination
-of colors, and generally include other handy infomation as well, such as:
-* date / time
-* current git branch
-* auto-trimmed current directory name
+of colors, and generally includes other handy infomation as well, such
+as:
+   * date / time
+   * current git branch
+   * auto-trimmed current directory name
 
 Here's an example of the 'giles' prompt theme:
 
-(@monolith)-(08:39 / Tue Sep 11)
+(@monolith)-(17:19 / Wed Sep 12)
 [-][~]:: cd src/bash-color-tools/
-(@monolith)-(08:39 / Tue Sep 11)
+(@monolith)-(17:20 / Wed Sep 12)
 [master][.../src/bash-color-tools]::
 
 It's a two-line prompt theme, and it looks a little bit 'busy' without
@@ -111,3 +113,25 @@ to:
 
 Notice also that the current directory portion has been trimmed to
 keep it at a resonable length. This is a tunable length that is set in
+in each theme configuration file, which are located in:
+
+ ~/.prompt-themes.d/conf/<theme_name>.theme
+
+The above configuration files also allow the setting of colors and
+characters and anything else the theme author allows you to set - it's
+very flexible.
+
+The 'giles' theme uses a 'fuzzy' string truncation function that tries
+to slice the string on a delimiter, if a delimiter is within a
+fuzzfactor length on either side of the maximum length specified.
+
+The same fuzzy truncantion happens for the branch names as well in the
+'giles' theme. Other themes here currently just use a hard length to
+truncate at, but all of this is easily customizable.
+
+See CUSTOMIZING for details on creating your own themes.
+
+
+
+
+
