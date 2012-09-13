@@ -41,7 +41,7 @@ color strings for the PS1 prompt variable. Each color is defined by a
 numeric triplet, or rgb value. The first number of the triplet is red,
 the second is green and the third is blue. Each numeric element has a
 range of valid values from 0-5. So 500 is full-on red, 050 is full-on
-green, and 005 id full-on blue. 000 is full-on black, and 555 is
+green, and 005 is full-on blue. 000 is full-on black, and 555 is
 full-on white.
 
 If you run 'face -v colors' in an xterm, it will dump a bunch of
