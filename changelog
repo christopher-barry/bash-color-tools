@@ -1,5 +1,11 @@
 bash-color-tools changelog
 
+2012-9-15 Christopher Barry <christopher.r.barry@gmail.com>
+* added bldtgz - generic versioned source tree tarballer
+
+2012-9-13 Christopher Barry <christopher.r.barry@gmail.com>
+* reverse the order of this changelog
+
 2012-9-12 Christopher Barry <christopher.r.barry@gmail.com>
 * add quick start section to INSTALL
 * refactor theme list printing

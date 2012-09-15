@@ -1,0 +1,99 @@
+#!/bin/bash
+#===============================================================================
+:<<LICENSE
+
+    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
+
+    This file is part of the bash-color-tools
+
+    bash-color-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LICENSE
+
+#===============================================================================
+# bldtgz
+#-------------------------------------------------------------------------------
+# generic versioned source tree tarball generator
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+function _get_pkg_version_()
+{
+    git describe || {
+        echo "Oops! not a git source dir."
+        exit 1
+    }
+    (( ${?} == 0 )) || exit 1
+}
+
+#-------------------------------------------------------------------------------
+function _gen_pkg_name_()
+{
+    local pkg_root=${0%/*}
+    local pkg_name=
+    (
+        cd ${pkg_root}
+        pkg_name=${PWD}
+        echo "${pkg_name##*/}-$(_get_pkg_version_)"
+    )
+}
+
+#-------------------------------------------------------------------------------
+function _create_build_dir_()
+{
+    local pkg_name=${1}
+    [[ -d ${TMPDIR} ]] || TMPDIR=/tmp
+    local build_dir=${TMPDIR}/bct-${RANDOM}-${RANDOM}-${RANDOM}/${pkg_name}
+
+    mkdir -p ${build_dir} || return 1
+    rsync -a --exclude=".git*" --exclude="bldtgz" ${0%/*}/ ${build_dir} 2>/dev/null || return 1
+    echo "${build_dir}"
+}
+
+#-------------------------------------------------------------------------------
+function _create_tarball_()
+{
+    local pkg_name=${1}
+    local build_dir=${2}
+
+    (
+        cd ${build_dir%/*}
+        tar czvf ${pkg_name}.tgz ${pkg_name}/ || exit 1
+    )
+    mv ${build_dir%/*}/${pkg_name}.tgz ${0%/*}/../ || exit 1
+    echo "New package: ${0%/*}/../${pkg_name}.tgz"
+    (( ${?} == 0 )) && rm -rf ${build_dir%/*} || return 1
+}
+
+#-------------------------------------------------------------------------------
+function _main_()
+{
+    local pkg_name=$(_gen_pkg_name_) || return ${?}
+    local build_dir=
+    build_dir=$(_create_build_dir_ ${pkg_name})
+    [[ -d ${build_dir} ]] || {
+        echo "Error: failed to create build directory '${build_dir}'"
+        return 1
+    }
+
+    _create_tarball_ ${pkg_name} ${build_dir} || {
+        echo "Error: failed to create tarball"
+        return 1
+    }
+
+    return 0
+}
+
+#===============================================================================
+_main_
