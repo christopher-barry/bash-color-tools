@@ -103,10 +103,10 @@ function _face()
             {
                 [[ ${pmode} ]] && {
                     # for PS1
-                    echo -n "\[\033[${1}8;3;$(rgb2idx ${2})\]"
+                    echo -n "\[\033[${1}8;5;$(rgb2idx ${2})\]"
                 } || {
                     # for color echoing
-                    echo -ne "\033[${1}8;3;$(rgb2idx ${2})"
+                    echo -ne "\033[${1}8;5;$(rgb2idx ${2})"
                 }
             }
 
