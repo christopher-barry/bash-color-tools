@@ -89,27 +89,75 @@ function prompt_fuzzy_truncate()
 {
     (( ${#} >= 3 )) || { echo "${FUNCNAME}: bad arglist: '${@}'"; return 1; }
     local -i maxlen=${1}
-    local -i fuzzfactor=${2}
+    local -i fuzzfactor=${2} # Mr. Sulu...
     local delim=${3}; shift 3
     local arg="${*}"
 
-    local -i fuzzlow=$(( maxlen - fuzzfactor ))
+    local -i fuzzlow=$((  maxlen - fuzzfactor ))
+    (( ${#arg} < ${fuzzlow} )) && fuzzlow=0
     local -i fuzzhigh=$(( maxlen + fuzzfactor ))
 
-    # echo and return immediately if
-    # we're below the maxlen length
+    # greater than maxlen? return immediately
     if (( ${#arg} <= ${maxlen} )); then
         echo "${arg}"
         return 0
     fi
 
-    # trim the string to fuzzhigh at most length
-    # and doing trimming off of the left side
+    # pre-front-trim the string to fuzzhigh length
     (( ${#arg} < ${fuzzhigh} )) && fuzzhigh=${#arg}
     arg=${arg: -${fuzzhigh}}
 
-    # walk right looking for delim...
-    for (( i = 0; i < ${#arg}; i++ )); do
+    # walk right looking for delim
+    for (( i = 0; i < ( ${#arg} - ${fuzzlow} ); i++ )); do
+        [[ "${arg:$i:1}" == "${delim}" ]] && {
+            echo "...${arg:$i}"
+            return 0
+        }
+    done
+
+    # if we get here, just dump it @ maxlen
+    echo "...${arg: -${maxlen}}"
+
+    return 0
+}
+
+#-------------------------------------------------------------------------------
+# fuzzily truncate based on delimiter, a max length and a fuzzy value
+# the idea is to break on a delimiter if possible
+function prompt_fuzzy_truncate_redux()
+{
+    (( ${#} >= 3 )) || { echo "${FUNCNAME}: bad arglist: '${@}'"; return 1; }
+    local -i maxlen=${1}
+    local -i fuzzfactor=${2} # Mr. Sulu...
+    local delim=${3}; shift 3
+    if ((  ${#} > 1 )); then
+        spaces=$(( ${#} - 1 ))
+        gap=${RANDOM}${RANDOM}
+        elements=( "${@/#/${gap}}" )
+        elements[0]="${elements[0]/${gap}/}"
+        element=( "${elements[@]//\// }" )
+    else
+        local -a dstr=( "${@://${delim}/ }" )
+    fi
+
+
+
+    local -i fuzzlow=$((  maxlen - fuzzfactor ))
+    (( ${#arg} < ${fuzzlow} )) && fuzzlow=0
+    local -i fuzzhigh=$(( maxlen + fuzzfactor ))
+
+    # greater than maxlen? return immediately
+    if (( ${#arg} <= ${maxlen} )); then
+        echo "${arg}"
+        return 0
+    fi
+
+    # pre-front-trim the string to fuzzhigh length
+    (( ${#arg} < ${fuzzhigh} )) && fuzzhigh=${#arg}
+    arg=${arg: -${fuzzhigh}}
+
+    # walk right looking for delim
+    for (( i = 0; i < ( ${#arg} - ${fuzzlow} ); i++ )); do
         [[ "${arg:$i:1}" == "${delim}" ]] && {
             echo "...${arg:$i}"
             return 0
