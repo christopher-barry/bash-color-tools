@@ -177,15 +177,15 @@ function _welcome_output_()
 {
     local inst_prefix=${1}
 
-    ${inst_prefix}/bin/face -f 042 "bash-color-tools are installed"
+    ${inst_prefix}/bin/face -f  042 "bash-color-tools are installed"
     ${inst_prefix}/bin/face -nf 015 "see "
     ${inst_prefix}/bin/face -nf 033 "${inst_prefix}/share/doc/bash-color-tools/* "
-    ${inst_prefix}/bin/face -f 015 "for more info"
+    ${inst_prefix}/bin/face -f  015 "for more info"
     ${inst_prefix}/bin/face -nf 015 "run: "
     ${inst_prefix}/bin/face -nf 033 ". ~/.bashrc"
     ${inst_prefix}/bin/face -nf 015 " to load the libs, then run: "
-    ${inst_prefix}/bin/face -f 033 "prompt list"
-    ${inst_prefix}/bin/face -f 015 "for a list of available prompt themes"
+    ${inst_prefix}/bin/face -f  033 "prompt list"
+    ${inst_prefix}/bin/face -f  015 "for a list of available prompt themes"
 }
 
 #-------------------------------------------------------------------------------
