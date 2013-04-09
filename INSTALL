@@ -103,6 +103,7 @@ the installation libexec directory, which by default is located at:
 root@box# /usr/share/bash-color-tools/libexec/uninstall
 
 You'll need to manually remove any personal dotfiles and themes in
-your home directory, located in ~/.prompt-themes.d/
+your home directory, located in ~/.prompt-themes.d/, as well as either
+comment out or remove any startup lines in user's .bashrc files.
 
 

@@ -125,7 +125,7 @@ The 'giles' theme uses a 'fuzzy' string truncation function that tries
 to slice the string on a delimiter, if a delimiter is within a
 fuzzfactor length on either side of the maximum length specified.
 
-The same fuzzy truncantion happens for the branch names as well in the
+The same fuzzy truncation happens for the branch names as well in the
 'giles' theme. Other themes here currently just use a hard length to
 truncate at, but all of this is easily customizable.
 

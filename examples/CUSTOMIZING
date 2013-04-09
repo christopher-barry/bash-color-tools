@@ -70,8 +70,8 @@ Themes are basically just script snippets that get sourced into the
 prompt framework. The theme itself is what actually sets the PS1
 variable when the command 'prompt <theme_name>' is run.
 
-Themes can use any of the various pre-defined functions that are that
-are located in:
+Themes can use any of the various pre-defined functions that are
+located in:
 
  ${INSTALL_PREFIX}/share/bash-color-tools/libexec/functions
 
@@ -213,7 +213,7 @@ PROMPT_DATE_CLR=110
 PROMPT_DIR_CLR=024
 PROMPT_SYM_CLR=133
 
-By convention, charater element vars are named:
+By convention, character element vars are named:
 
 PROMPT_<ELEMENT_NAME>_CHAR
 
@@ -239,7 +239,7 @@ EOF
 If you have any theme specific functions, define them here.
 
 First thing in the theme snippet, we init all the global theme config
-vars by running the theme function.
+vars by running the prompt_<${THEME}>_theme function.
 
 # init globals
 prompt_template_theme
@@ -281,7 +281,7 @@ for the string, and element[1] is used to set it back to normal.
 Here, we're using face to set the foreground 'color' of a space
 character inside an array definition. This has the handy side effect
 of creating two colorizing escape strings in the array, which we'll
-use to color the function's output.
+use to color, then reset to normal, the function's output.
 
 # the following two arrays elements wrap the
 # calculated date and dir in color escape codes
@@ -325,10 +325,5 @@ that's for your imagination. Me, I need to go get another beer.
 
 Cheers,
 -C
-
-
-
-
-
 
 

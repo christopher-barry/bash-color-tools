@@ -22,17 +22,15 @@ bash-color-tools
 bash-color-tools came about mostly out of annoyance that someone
 hadn't already done it.
 
-I already had a crappy color prompt I hacked together years ago after
-reading the bash-prompt-howto that I had dragged around from box to
-box, various work places, etc., and it mostly never changed, because
-it was such a mindfuck to deal with it. That, and it only did like 16
-colors - all of which were ugly. There were many times I wanted to
-change it, but it was such a bitch I couldn't or wouldn't be bothered.
+I already had a color prompt I hacked together years ago after reading
+the bash-prompt-howto that I had dragged around from box to box,
+various work places, etc. It mostly never changed because it was such
+a pain to deal with it.
 
 Then I had a need for colorizing text generically, in other non-prompt
 bash applications, and set out to create a truly useful hi-color echo
-command that was as easy to use as echo, and hid all that escape code
-crap from the user. From that effort, 'face' was born.
+command that was as easy to use as echo, and hid all the escape code
+stuff from the user. From that effort, 'face' was born.
 
 Then, once I started using git, I went back to my old prompt script
 'myprompt', and started hacking in branch support. After about 5
@@ -48,8 +46,8 @@ Michael Brooks: for the index color math code
 Buck Ryan:      for helping track down the nasty escaping bug
 
 Anyway, here it is and hopefully you'll find it useful. If you do, let
-me know. And if you create some cool themes, send them in and I'll
-include them in the distribution.
+me know. If you create some cool themes, (see ./examples/CUSTOMIZING)
+send them in and I'll include them in the distribution.
 
 
 Cheers,
