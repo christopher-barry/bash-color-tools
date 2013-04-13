@@ -59,18 +59,35 @@ PROMPT_BRANCH_FUZZFACTOR=4
 # to see what color == what rgb value
 #
 # default color rgb values for prompt elements
-PROMPT_BRKT_CLR=122
-PROMPT_PAREN_CLR=233
-PROMPT_DASH_CLR=122
-PROMPT_SLASH_CLR=122
-PROMPT_TIME_CLR=035
-PROMPT_DATE_CLR=035
-PROMPT_AT_CLR=432
-PROMPT_HOST_CLR=321
-PROMPT_GITBRANCH_CLR=210
-PROMPT_DIR_CLR=013
-PROMPT_SYM_CLR=122
-
+case \${TERM} in
+    linux)
+        PROMPT_LOW_CLR=1
+        PROMPT_BRKT_CLR=cyan
+        PROMPT_PAREN_CLR=cyan
+        PROMPT_DASH_CLR=cyan
+        PROMPT_SLASH_CLR=cyan
+        PROMPT_TIME_CLR=brightcyan
+        PROMPT_DATE_CLR=brightcyan
+        PROMPT_AT_CLR=brightgrey
+        PROMPT_HOST_CLR=grey
+        PROMPT_GITBRANCH_CLR=yellow
+        PROMPT_DIR_CLR=brightblue
+        PROMPT_SYM_CLR=cyan
+    ;;
+    *)
+        PROMPT_BRKT_CLR=122
+        PROMPT_PAREN_CLR=233
+        PROMPT_DASH_CLR=122
+        PROMPT_SLASH_CLR=122
+        PROMPT_TIME_CLR=035
+        PROMPT_DATE_CLR=035
+        PROMPT_AT_CLR=432
+        PROMPT_HOST_CLR=321
+        PROMPT_GITBRANCH_CLR=210
+        PROMPT_DIR_CLR=013
+        PROMPT_SYM_CLR=122
+    ;;
+esac
 # default prompt elements
 PROMPT_NOGIT_CHAR='-'
 PROMPT_LBRKT_CHAR='['
@@ -115,23 +132,25 @@ function pgfb() { prompt_git_fuzzy_branch "${@}"; }
 # init globals
 prompt_giles_theme
 
+# set low coloer mode if needed
+plc=${PROMPT_LOW_CLR}
 # set colors
-lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
-rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-lp="$(_face -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
-rp="$(_face -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
-da="$(_face -Pnf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
-sl="$(_face -Pnf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
-at="$(_face -Pnf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
-sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+lb="$(_face ${plc:+ -l} -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face ${plc:+ -l} -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+lp="$(_face ${plc:+ -l} -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
+rp="$(_face ${plc:+ -l} -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
+da="$(_face ${plc:+ -l} -Pnf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
+sl="$(_face ${plc:+ -l} -Pnf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
+at="$(_face ${plc:+ -l} -Pnf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
+sc="$(_face ${plc:+ -l} -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
 
 # the following arrays elements wrap the
 # calculated values in color escape codes
-h=( $(_face -Pnf ${PROMPT_HOST_CLR} " ") )
-tm=( $(_face -Pnf ${PROMPT_TIME_CLR} " ") )
-dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
-b=( $(_face -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
-d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+h=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_HOST_CLR} " ") )
+tm=( $(_face ${plc:+ -l} -Pnf ${PROMPT_TIME_CLR} " ") )
+dt=( $(_face ${plc:+ -l} -Pnf ${PROMPT_DATE_CLR} " ") )
+b=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
+d=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
 PS1="${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
