@@ -68,8 +68,8 @@ case \${TERM} in
         PROMPT_SLASH_CLR=cyan
         PROMPT_TIME_CLR=brightcyan
         PROMPT_DATE_CLR=brightcyan
-        PROMPT_AT_CLR=brightgrey
-        PROMPT_HOST_CLR=grey
+        PROMPT_AT_CLR=brightgray
+        PROMPT_HOST_CLR=gray
         PROMPT_GITBRANCH_CLR=yellow
         PROMPT_DIR_CLR=brightblue
         PROMPT_SYM_CLR=cyan
