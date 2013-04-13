@@ -150,21 +150,21 @@ function low_pallette()
     echo "Basic Colors"
     echo
     for c in red green blue purple yellow cyan; do
-        _face -lnf ${c} "   ${c}   "
+        _face -lnf ${c} " ${c}"
     done
     echo
     echo
     echo "Ehanced  Colors"
     echo
     for c in brightred brightgreen brightblue brightpurple brightyellow brightcyan; do
-        _face -lnf ${c} "   ${c}   "
+        _face -lnf ${c} " ${c}"
     done
     echo
     echo
     echo "black and white"
     echo
-    for c in black white; do
-        _face -lnf ${c} "   ${c}   "
+    for c in black gray brightgray white; do
+        _face -lnf ${c} " ${c}"
     done
     echo
     echo
@@ -173,14 +173,14 @@ function low_pallette()
     echo "Basic Colors"
     echo
     for c in red green blue purple yellow cyan; do
-        _face -lnb ${c} '   '"${c}"'   '
+        _face -lnb ${c} '  '"${c}"'  '
     done
     echo
     echo
     echo "black and white"
     echo
     for c in black white; do
-        _face -lnb ${c} '   '"${c}"'   '
+        _face -lnb ${c} '  '"${c}"'  '
     done
     echo
 }
