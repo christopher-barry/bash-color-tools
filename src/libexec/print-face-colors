@@ -41,6 +41,8 @@ LICENSE
 #-------------------------------------------------------------------------------
 function pallette()
 {
+    echo "        HiColor Output"
+    echo
     local r=1 g=1 b=1
     echo "       Primary Pallette"
 
@@ -139,6 +141,47 @@ function pallette()
 }
 
 #-------------------------------------------------------------------------------
+# for use on the console
+function low_pallette()
+{
+    echo "LowColor Foreground Colors"
+    echo
+    echo "Basic Colors"
+    echo
+    for c in red green blue purple yellow cyan; do
+        _face -lnf ${c} " ${c} "
+    done
+    echo
+    echo "Ehanced  Colors"
+    echo
+    for c in brightred brightgreen brightblue brightpurple brightyellow brightcyan; do
+        _face -lnf ${c} " ${c} "
+    done
+    echo
+    echo "black and white"
+    echo
+    for c in black white; do
+        _face -lnf ${c} " ${c} "
+    done
+    echo
+    echo "LowColor Background Colors"
+    echo
+    echo "Basic Colors"
+    echo
+    for c in red green blue purple yellow cyan; do
+        _face -lnb ${c} '     '
+    done
+    echo
+    echo "black and white"
+    echo
+    for c in black white; do
+        _face -lnb ${c} '     '
+    done
+    echo
+}
+
+
+#-------------------------------------------------------------------------------
 # draw a row of color out to white in increments
 # beginning at the highest saturation of the hue
 # and containing in the row the specified rgb.
@@ -182,7 +225,15 @@ if [[ "${0##*/}" != "face" ]]; then
     [[ -f ${0%/*}/face ]] && {
         [[ "${1}" == "-v" ]] && VERBOSE=1 CMD_NAME=
         source ${0%/*}/face libmode
-        pallette
+        case $TERM in
+            linux)
+                low_pallette
+                ;;
+            *)
+                pallette
+                low_pallette
+                ;;
+        esac
     } || {
         echo >&2 "cannot locate: ${0%/*}face"
         echo >&2 "this file is required to generate color pallettes"
