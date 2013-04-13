@@ -52,8 +52,7 @@ function _face()
     while getopts ":PHhlnef:b:" opt
     do
         case ${opt} in
-            n) local N=n
-                ;; # no newline
+            n) local N=n               ;; # no newline
             e) local E=e               ;; # escape message
             f) local -l F=${OPTARG:-x} ;; # foreground rgb
             b) local -l B=${OPTARG:-x} ;; # background rgb
@@ -125,7 +124,8 @@ function _face()
         lowcolor) # console mode w/o framebuffer requires this mode [-l]
             [[ ${pmode} ]] && {
                 # for PS1
-                local norm="\[\033[0;0;40m\033[0m\]"; echo -n "${norm}"
+                # saved norm prefix \033[0;0;40m
+                local norm="\[\033[0m\]"; echo -n "${norm}"
                 # forground
                 local -A fC=(); fC=(
                     [white]='\[\033[1;37m\]'  [black]='\[\033[0;30m\]'
@@ -148,7 +148,8 @@ function _face()
                 )
             } || {
                 # for color echoing
-                local norm="\033[0;0;40m\033[0m"; echo -ne "${norm}"
+                # saved norm prefix \033[0;0;40m
+                local norm="\033[0m"; echo -ne "${norm}"
                 # forground
                 local -A fC=(); fC=(
                     [white]='\033[1;37m'  [black]='\033[0;30m'
