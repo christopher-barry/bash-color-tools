@@ -145,8 +145,8 @@ function pallette()
 function low_pallette()
 {
     echo
-    echo "LowColor Foreground Colors"
-    echo
+    echo "LowColor Foreground Colors (Linux console)"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "Basic Colors"
     echo
     for c in red green blue purple yellow cyan; do
@@ -154,22 +154,22 @@ function low_pallette()
     done
     echo
     echo
-    echo "Ehanced  Colors"
+    echo "Enhanced  Colors"
     echo
     for c in brightred brightgreen brightblue brightpurple brightyellow brightcyan; do
         _face -lnf ${c} " ${c}"
     done
     echo
     echo
-    echo "black and white"
+    echo "black thru white"
     echo
     for c in black gray brightgray white; do
         _face -lnf ${c} " ${c}"
     done
     echo
     echo
-    echo "LowColor Background Colors"
-    echo
+    echo "LowColor Background Colors (Linux console)"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "Basic Colors"
     echo
     for c in red green blue purple yellow cyan; do

@@ -132,7 +132,7 @@ function pgfb() { prompt_git_fuzzy_branch "${@}"; }
 # init globals
 prompt_giles_theme
 
-# set low coloer mode if needed
+# set low color mode if needed
 plc=${PROMPT_LOW_CLR}
 # set colors
 lb="$(_face ${plc:+ -l} -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
