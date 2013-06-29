@@ -100,6 +100,7 @@ PROMPT_AT_CHAR='@'
 PROMPT_BRANCH_DELIM='_'
 
 (( \$(id -u) == 0 )) && {
+    [[ ${PROMPT_LOW_CLR} ]] || PROMPT_SYM_CLR=520
     PROMPT_SYM_CHAR='# '
 } || {
     PROMPT_SYM_CHAR=':: '
@@ -153,5 +154,5 @@ b=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
 d=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="\$(psxt)${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+PS1="${pxst}${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
 

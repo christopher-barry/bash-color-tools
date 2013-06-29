@@ -22,6 +22,16 @@
 LICENSE
 
 #===============================================================================
+# PS1 vars
+#-------------------------------------------------------------------------------
+# Various generic PS1 components as vars available to all prompt themes
+#===============================================================================
+
+# prompt_xterm_set_titlebar
+pxst='\[\033]0;\u@\h:\w\007\]'
+
+
+#===============================================================================
 # functions
 #-------------------------------------------------------------------------------
 # function lib available to all prompt themes
@@ -60,15 +70,6 @@ function prompt_date_time()
 }
 # short alias
 function pdt() { prompt_date_time; }
-
-#-------------------------------------------------------------------------------
-# set the xterm titlebar
-function prompt_set_xterm_titlebar()
-{
-    echo -en '\[\033]0;\u@\h:\w\007\]'
-}
-# short alias
-function psxt() { prompt_set_xterm_titlebar; }
 
 
 #===============================================================================
