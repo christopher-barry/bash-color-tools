@@ -111,7 +111,7 @@ function prompt()
         d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
 
         # set the default prompt
-        PS1="${pxst}\$(psxt)${u}${a}${h}${d[0]}\$(pgp)${d[1]}${sc}"
+        PS1="\$(pxst)${xst}\$(psxt)${u}${a}${h}${d[0]}\$(pgp)${d[1]}${sc}"
 
     fi
 

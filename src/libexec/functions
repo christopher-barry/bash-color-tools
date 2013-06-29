@@ -22,16 +22,6 @@
 LICENSE
 
 #===============================================================================
-# PS1 vars
-#-------------------------------------------------------------------------------
-# Various generic PS1 components as vars available to all prompt themes
-#===============================================================================
-
-# prompt_xterm_set_titlebar
-pxst='\[\033]0;\u@\h:\w\007\]'
-
-
-#===============================================================================
 # functions
 #-------------------------------------------------------------------------------
 # function lib available to all prompt themes
@@ -40,6 +30,15 @@ pxst='\[\033]0;\u@\h:\w\007\]'
 #===============================================================================
 # prompt functions embedded in PS1 string, marked by a 'short alias'
 #===============================================================================
+
+# prompt_xterm_set_titlebar
+# upvar's $xst into current scope
+# use like PS1="\$(pxst)${xst}..."
+function prompt_xterm_set_titlebar()
+{
+    declare -g xst="\[\033]0;\u@\h:\w\007\]"
+}
+function pxst() { prompt_xterm_set_titlebar; }
 
 #-------------------------------------------------------------------------------
 # output the sized current directory

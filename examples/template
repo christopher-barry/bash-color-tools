@@ -84,5 +84,5 @@ dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
 d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="${pxst}${lb}${dt[0]}\$(pdt)${dt[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+PS1="\$(pxst)${xst}${lb}${dt[0]}\$(pdt)${dt[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
 
