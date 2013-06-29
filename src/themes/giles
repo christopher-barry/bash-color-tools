@@ -100,7 +100,7 @@ PROMPT_AT_CHAR='@'
 PROMPT_BRANCH_DELIM='_'
 
 (( \$(id -u) == 0 )) && {
-    [[ ${PROMPT_LOW_CLR} ]] || PROMPT_SYM_CLR=520
+    [ -n \${PROMPT_LOW_CLR} ] || PROMPT_SYM_CLR=520
     PROMPT_SYM_CHAR='# '
 } || {
     PROMPT_SYM_CHAR=':: '
