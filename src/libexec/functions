@@ -21,6 +21,10 @@
 
 LICENSE
 
+# xterm titlebar escape array
+# use like: PS1="${xt[0]},functions, macros or text to put in title bar${xt[1]}..."
+xt=( '\[\033]0;' '\007\]' )
+
 #===============================================================================
 # functions
 #-------------------------------------------------------------------------------
@@ -30,15 +34,6 @@ LICENSE
 #===============================================================================
 # prompt functions embedded in PS1 string, marked by a 'short alias'
 #===============================================================================
-
-# prompt_xterm_set_titlebar
-# upvar's $xst into current scope
-# use like PS1="\$(pxst)${xst}..."
-function prompt_xterm_set_titlebar()
-{
-    declare -g xst="\[\033]0;\u@\h:\w\007\]"
-}
-function pxst() { prompt_xterm_set_titlebar; }
 
 #-------------------------------------------------------------------------------
 # output the sized current directory
