@@ -35,7 +35,7 @@ LICENSE
 # output the sized current directory
 function prompt_get_pwd()
 {
-    prompt_truncate ${PROMPT_MAXPATHLEN} "${PWD}"
+    prompt_truncate ${PROMPT_MAXPATHLEN:-20} "${PWD}"
 }
 # short alias
 function pgp() { prompt_get_pwd "${@}"; }
@@ -47,7 +47,7 @@ function prompt_get_fuzzy_pwd()
     [[ "${PWD}" =~ (^${HOME})(.*) ]] && {
         str="~${BASH_REMATCH[2]}"
     }
-    prompt_fuzzy_truncate ${PROMPT_MAXPATHLEN} ${PROMPT_DIR_FUZZFACTOR} '/' "${str:-${PWD}}"
+    prompt_fuzzy_truncate ${PROMPT_MAXPATHLEN:-20} ${PROMPT_DIR_FUZZFACTOR:-8} '/' "${str:-${PWD}}"
 }
 # short alias
 function pgfp() { prompt_get_fuzzy_pwd "${@}"; }
@@ -61,7 +61,15 @@ function prompt_date_time()
 # short alias
 function pdt() { prompt_date_time; }
 
-#
+#-------------------------------------------------------------------------------
+# set the xterm titlebar
+function prompt_set_xterm_titlebar()
+{
+    echo -n '\[\033]0;\u@\h:\w\007\]'
+}
+# short alias
+function psxt() { prompt_set_xterm_titlebar; }
+
 
 #===============================================================================
 # utility functions used by other function lib functions - no aliases
