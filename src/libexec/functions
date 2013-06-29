@@ -65,7 +65,7 @@ function pdt() { prompt_date_time; }
 # set the xterm titlebar
 function prompt_set_xterm_titlebar()
 {
-    echo -n '\[\033]0;\u@\h:\w\007\]'
+    echo -en '\[\033]0;\u@\h:\w\007\]'
 }
 # short alias
 function psxt() { prompt_set_xterm_titlebar; }
