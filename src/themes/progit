@@ -149,7 +149,8 @@ function prompt_git_fuzzy_branch()
     [[ ${gb} ]] && {
         gb=${gb##*/}
         loc_rem="$(git rev-list --left-right ${gb}...origin/${gb} --count 2>/dev/null)"
-        [[ "${loc_rem//[[:blank:]]/:}" == "0:0" ]] && {
+        [[ ${?} -eq 0 ]] || loc_rem=
+        [[ ! ${loc_rem} || "${loc_rem//[[:blank:]]/:}" == "0:0" ]] && {
             gb_data="${gb}"
         } || {
             gb_data="${gb} ${loc_rem//[[:blank:]]/:}"
