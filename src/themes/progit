@@ -90,7 +90,7 @@ case \${TERM} in
 		PROMPT_SYM_CLR=cyan
 		PROMPT_SYM_CHAR=':: '
 	}
-	PROMPT_USER_CLR=${PROMPT_SYM_CLR}
+	PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
     ;;
     *)
 	PROMPT_AT_CLR=432
@@ -115,7 +115,7 @@ case \${TERM} in
 		PROMPT_SYM_CLR=122
 		PROMPT_SYM_CHAR=':: '
 	}
-	PROMPT_USER_CLR=${PROMPT_SYM_CLR}
+	PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
     ;;
 esac
 # default prompt elements
