@@ -31,8 +31,13 @@ THEME=progit
 
 #===============================================================================
 # 'prompt progit'
-# [master|v0.9,9-0-g005443d|?ACDMRU]
-# [@mybox][.../src/apps/]::
+# when in a repository shows all relevent repo status indicators,
+# including local:remote commit status in the branch field:
+#  (cbarry@mybox)-[Index not updated:4|Deleted in tree:2|Untracked:7]
+#  [master 3:0][.../src/apps/]::
+# when outside a repository show time, date and 1, 5, and 15min load averages:
+#  (cbarry@mybox)-(02:03 / Sun Jun 30)-(0.2|0.1|0.3)
+#  [-][.../usr/local/sbin]::
 function prompt_progit_theme()
 {
     # override and customize defaults with dotfile
@@ -58,36 +63,59 @@ PROMPT_BRANCH_FUZZFACTOR=4
 # run 'face -v colors' for rgb pallette output
 # to see what color == what rgb value
 #
-# default color rgb values for prompt elements
+# default color name/rgb values for prompt elements
+# for both the linux console and xterm
 case \${TERM} in
     linux)
-	PROMPT_LOW_CLR=1
-	PROMPT_BRKT_CLR=cyan
-	PROMPT_PAREN_CLR=cyan
-	PROMPT_DASH_CLR=cyan
-	PROMPT_SLASH_CLR=cyan
 	PROMPT_AT_CLR=brightgray
-	PROMPT_SEP_CLR=brightyellow
-	PROMPT_GITBRANCH_CLR=yellow
-	PROMPT_TIME_CLR=brightcyan
+	PROMPT_BRKT_CLR=cyan
+	PROMPT_DASHSEP_CLR=cyan
+	PROMPT_DASH_CLR=cyan
 	PROMPT_DATE_CLR=brightcyan
-	PROMPT_HOST_CLR=gray
 	PROMPT_DIR_CLR=brightblue
-	PROMPT_SYM_CLR=cyan
+	PROMPT_GITBRANCH_CLR=yellow
+	PROMPT_HOST_CLR=gray
+	PROMPT_LOADAVG_CLR=gray
+	PROMPT_LOW_CLR=1
+	PROMPT_PAREN_CLR=cyan
+	PROMPT_SEP_CLR=brightgray
+	PROMPT_SLASH_CLR=cyan
+	PROMPT_STATUS_NUM_CLR=brightgray
+	PROMPT_STATUS_TXT_CLR=gray
+	PROMPT_TIME_CLR=brightcyan
+	(( \$(id -u) == 0 )) && {
+		PROMPT_SYM_CLR=brightyellow
+		PROMPT_SYM_CHAR='# '
+	} || {
+		PROMPT_SYM_CLR=cyan
+		PROMPT_SYM_CHAR=':: '
+	}
+	PROMPT_USER_CLR=${PROMPT_SYM_CLR}
     ;;
     *)
-	PROMPT_BRKT_CLR=122
-	PROMPT_PAREN_CLR=233
-	PROMPT_DASH_CLR=122
-	PROMPT_SLASH_CLR=122
 	PROMPT_AT_CLR=432
-	PROMPT_SEP_CLR=444
-	PROMPT_GITBRANCH_CLR=520
-	PROMPT_TIME_CLR=035
+	PROMPT_BRKT_CLR=122
+	PROMPT_DASHSEP_CLR=122
+	PROMPT_DASH_CLR=122
 	PROMPT_DATE_CLR=035
-	PROMPT_HOST_CLR=321
 	PROMPT_DIR_CLR=013
-	PROMPT_SYM_CLR=122
+	PROMPT_GITBRANCH_CLR=420
+	PROMPT_HOST_CLR=321
+	PROMPT_LOADAVG_CLR=222
+	PROMPT_PAREN_CLR=233
+	PROMPT_SEP_CLR=122
+	PROMPT_SLASH_CLR=122
+	PROMPT_STATUS_NUM_CLR=221
+	PROMPT_STATUS_TXT_CLR=110
+	PROMPT_TIME_CLR=035
+	(( \$(id -u) == 0 )) && {
+		PROMPT_SYM_CLR=540
+		PROMPT_SYM_CHAR='# '
+	} || {
+		PROMPT_SYM_CLR=122
+		PROMPT_SYM_CHAR=':: '
+	}
+	PROMPT_USER_CLR=${PROMPT_SYM_CLR}
     ;;
 esac
 # default prompt elements
@@ -102,13 +130,6 @@ PROMPT_SEP_CHAR='|'
 PROMPT_BRANCH_DELIM='_'
 PROMPT_NOGIT_CHAR='-'
 
-(( \$(id -u) == 0 )) && {
-    PROMPT_SYM_CLR=540
-    PROMPT_SYM_CHAR='# '
-} || {
-    PROMPT_SYM_CHAR=':: '
-}
-
 EOF
 
        echo "edit ~/.prompt-themes.d/conf/${THEME}.theme to modify colors, etc."
@@ -117,36 +138,44 @@ EOF
 
     return 0
 }
-#
+
+#-------------------------------------------------------------------------------
 function prompt_git_fuzzy_branch()
 {
-    if [[ "$(git branch 2>/dev/null)" =~ [*][[:blank:]]([-a-zA-Z0-9_. ]+) ]]
-    then
-        gb="${BASH_REMATCH[1]}"
-        prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${gb}"
-    else
+    local -a loc_rem=()
+    local gb=
+
+    gb=$(git symbolic-ref HEAD 2>/dev/null)
+    [[ ${gb} ]] && {
+        gb=${gb##*/}
+        loc_rem="$(git rev-list --left-right ${gb}...origin/${gb} --count)"
+        prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${gb} ${loc_rem//[[:blank:]]/:}"
+    } || {
         prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${PROMPT_NOGIT_CHAR}"
-    fi
+    }
 
     return 0
 }
 # short alias
 function pgfb() { prompt_git_fuzzy_branch; }
 
+#-------------------------------------------------------------------------------
 function prompt_git_status()
 {
-    local XY X Y
+    local XY X Y out
     while IFS='' read line; do
         XY="${line:0:2}"
         [[ "${XY:0:1}" == " " ]] && X="_" || X="${XY:0:1}"
         [[ "${XY:1:1}" == " " ]] && Y="_" || Y="${XY:1:1}"
-        echo "${X}${Y}"
+        out+=( "${X}${Y}" )
     done < <(git status --porcelain 2>&1)
+    echo "${out[@]}"
 }
 function pgs() { prompt_git_status; }
 
-#
-:<<EOF
+#===============================================================================
+# from man git-status
+:<<'DOCUMENT'
 ' ' = unmodified
  M  = modified
  A  = added
@@ -177,83 +206,107 @@ U           U    unmerged, both modified
 -------------------------------------------------
 ?           ?    untracked
 -------------------------------------------------
-EOF
+DOCUMENT
+#===============================================================================
 
+#-------------------------------------------------------------------------------
 function prompt_git_status_dashboard()
 {
-    local s= not_updated= updated_in_index= added_to_index= deleted_from_index= renamed_in_index=
-    local copied_in_index= index_and_work_tree_matches= work_tree_changed_since_last_index=
-    local deleted_in_work_tree= unmerged_both_deleted= unmerged_added_by_us= unmerged_deleted_by_them=
-    local unmerged_added_by_them= unmerged_deleted_by_us= unmerged_both_added= unmerged_both_modified=
-    local nui= uii= ati= dfi= rii= cii= wai= wch= wdl= dd= au= ud= ua= du= aa= uu= untracked=
-    local -a ndash=() mdash=()
-    local status_dash=
+    local -i not_updated updated_in_index added_to_index deleted_from_index renamed_in_index
+    local -i copied_in_index index_and_work_tree_matches work_tree_changed_since_last_index
+    local -i deleted_in_work_tree unmerged_both_deleted unmerged_added_by_us unmerged_deleted_by_them
+    local -i unmerged_added_by_them unmerged_deleted_by_us unmerged_both_added unmerged_both_modified untracked
+    local -i cnt dsh lavg
+    local s=
+    local -a dashboard=() loadavg=()
+
+    len() { local t="$*"; echo ${#t}; }
 
     if git status -s &>/dev/null; then
 
-        # parse the status
+        # parse the status, counting instances of each
         for s in $(prompt_git_status); do
 
             case ${s} in
                 # normal status
-                _[MD])    not_updated=$((${not_updated}+1)) ;;
-                M[_MD])   updated_in_index=$((${updated_in_index}+1)) ;;
-                A[_MD])   added_to_index=$((${added_to_index}+1)) ;;
-                D[_M])    deleted_from_index=$((${deleted_from_index}+1)) ;;
-                R[_MD])   renamed_in_index=$((${renamed_in_index}+1)) ;;
-                C[_MD])   copied_in_index=$((${copied_in_index}+1)) ;;
-                [MARC]_)  index_and_work_tree_matches=$((${index_and_work_tree_matches}+1)) ;;
-                [_MARC]M) work_tree_changed_since_index=$((${work_tree_changed_since_index}+1)) ;;
-                [_MARC]D) deleted_in_work_tree=$((${deleted_in_work_tree}+1)) ;;
+                _[MD])    ((not_updated++)) ;;&
+                M[_MD])   ((updated_in_index++)) ;;&
+                A[_MD])   ((added_to_index++)) ;;&
+                D[_M])    ((deleted_from_index++)) ;;&
+                R[_MD])   ((renamed_in_index++)) ;;&
+                C[_MD])   ((copied_in_index++)) ;;&
+                [MARC]_)  ((index_and_work_tree_matches++)) ;;&
+                [_MARC]M) ((work_tree_changed_since_index++)) ;;&
+                [_MARC]D) ((deleted_in_work_tree++)) ;;&
                 # merge status
-                DD) unmerged_both_deleted=$((${unmerged_both_deleted}+1)) ;;
-                AU) unmerged_added_by_us=$((${unmerged_added_by_us}+1)) ;;
-                UD) unmerged_deleted_by_them=$((${unmerged_deleted_by_them}+1)) ;;
-                UA) unmerged_added_by_them=$((${unmerged_added_by_them}+1)) ;;
-                DU) unmerged_deleted_by_us=$((${unmerged_deleted_by_us}+1)) ;;
-                AA) unmerged_both_added=$((${unmerged_both_added}+1)) ;;
-                UU) unmerged_both_modified=$((${unmerged_both_modified}+1)) ;;
+                DD)       ((unmerged_both_deleted++)) ;;&
+                AU)       ((unmerged_added_by_us++)) ;;&
+                UD)       ((unmerged_deleted_by_them++)) ;;&
+                UA)       ((unmerged_added_by_them++)) ;;&
+                DU)       ((unmerged_deleted_by_us++)) ;;&
+                AA)       ((unmerged_both_added++)) ;;&
+                UU)       ((unmerged_both_modified++)) ;;&
                 # untracked status
-                "??") untracked=$((${untracked}+1)) ;;
+                \?\?)     ((untracked++)) ;;
             esac
 
         done
 
-        # normal dash
-        [[ ${not_updated} -gt 0 ]]                   && nui="IN:${not_updated}"                   || nui=
-        [[ ${updated_in_index} -gt 0 ]]              && uii="IU:${updated_in_index}"              || uii=
-        [[ ${added_to_index} -gt 0 ]]                && ati="IA:${added_to_index}"                || ati=
-        [[ ${deleted_from_index} -gt 0 ]]            && dfi="ID:${deleted_from_index}"            || dfi=
-        [[ ${renamed_in_index} -gt 0 ]]              && rii="IR:${renamed_in_index}"              || rii=
-        [[ ${copied_in_index} -gt 0 ]]               && cii="IC:${copied_in_index}"               || cii=
-        [[ ${index_and_work_tree_matches} -gt 0 ]]   && wai="WI:${index_and_work_tree_matches}"   || wai=
-        [[ ${work_tree_changed_since_index} -gt 0 ]] && wch="WN:${work_tree_changed_since_index}" || wch=
-        [[ ${deleted_in_work_tree} -gt 0 ]]          && wdl="WD:${deleted_in_work_tree}"          || wdl=
-        ndash=( ${nui} ${uii} ${ati} ${dfi} ${rii} ${dii} ${wai} ${wch} ${wdl} )
-        [[ ${#ndash[@]} -gt 0 ]] && status_dash="[Status: $(echo "${ndash[*]}"|sed 's,\ \+,|,g')]"
+        # remote status element
 
-        # merge dash
-        [[ ${unmerged_both_deleted} -gt 0 ]]    && dd="DD:${unmerged_both_deleted}"    || dd=
-        [[ ${unmerged_added_by_us} -gt 0 ]]     && au="AU:${unmerged_added_by_us}"     || au=
-        [[ ${unmerged_deleted_by_them} -gt 0 ]] && ud="UD:${unmerged_deleted_by_them}" || ud=
-        [[ ${unmerged_added_by_them} -gt 0 ]]   && ua="UA:${unmerged_added_by_them}"   || ua=
-        [[ ${unmerged_deleted_by_us} -gt 0 ]]   && du="DU:${unmerged_deleted_by_us}"   || du=
-        [[ ${unmerged_both_added} -gt 0 ]]      && aa="AA:${unmerged_both_added}"    || aa=
-        [[ ${unmerged_both_modified} -gt 0 ]]   && uu="UU:${unmerged_both_modified}"   || uu=
-        mdash=( ${dd} ${au} ${ud} ${ua} ${du} ${aa} ${uu} )
-        [[ ${#mdash[@]} -gt 0 ]] && status_dash="${status_dash}[Merged: $(echo "${mdash[*]}"|sed 's,\ \+,|,g')]"
-
-        # untracked dash
-        [[ ${untracked} -gt 0 ]] && status_dash="${status_dash}[Untracked: ${untracked}]"
+        # normal dashboard elements
+        [[ ${not_updated} -gt 0 ]]                   && dashboard+=("Index not updated:${not_updated}")
+        [[ ${updated_in_index} -gt 0 ]]              && dashboard+=("Index updated:${updated_in_index}")
+        [[ ${added_to_index} -gt 0 ]]                && dashboard+=("Added to index:${added_to_index}")
+        [[ ${deleted_from_index} -gt 0 ]]            && dashboard+=("Deleted from index:${deleted_from_index}")
+        [[ ${renamed_in_index} -gt 0 ]]              && dashboard+=("Renamed in index:${renamed_in_index}")
+        [[ ${copied_in_index} -gt 0 ]]               && dashboard+=("Copied in index:${copied_in_index}")
+        [[ ${index_and_work_tree_matches} -gt 0 ]]   && dashboard+=("Index and tree in sync:${index_and_work_tree_matches}")
+        [[ ${work_tree_changed_since_index} -gt 0 ]] && dashboard+=("Tree changed:${work_tree_changed_since_index}")
+        [[ ${deleted_in_work_tree} -gt 0 ]]          && dashboard+=("Deleted in tree:${deleted_in_work_tree}")
+        # merge dashboard elements
+        [[ ${unmerged_both_deleted} -gt 0 ]]         && dashboard+=("Both deleted:${unmerged_both_deleted}")
+        [[ ${unmerged_added_by_us} -gt 0 ]]          && dashboard+=("Added here:${unmerged_added_by_us}")
+        [[ ${unmerged_deleted_by_them} -gt 0 ]]      && dashboard+=("Deleted there:${unmerged_deleted_by_them}")
+        [[ ${unmerged_added_by_them} -gt 0 ]]        && dashboard+=("Added there:${unmerged_added_by_them}")
+        [[ ${unmerged_deleted_by_us} -gt 0 ]]        && dashboard+=("Deleted here:${unmerged_deleted_by_us}")
+        [[ ${unmerged_both_added} -gt 0 ]]           && dashboard+=("Both added:${unmerged_both_added}")
+        [[ ${unmerged_both_modified} -gt 0 ]]        && dashboard+=("Both modified:${unmerged_both_modified}")
+        # untracked dashboard element
+        [[ ${untracked} -gt 0 ]]                     && dashboard+=("Untracked:${untracked}")
 
     fi
 
-    _face -nf ${PROMPT_PAREN_CLR} "("
-    _face -nf ${PROMPT_AT_CLR} "@"
-    _face -nf ${PROMPT_HOST_CLR} "$(hostname -s)"
-    _face -nf ${PROMPT_PAREN_CLR} ")"
-    [[ ${status_dash} ]] && {
-        _face -nf 222  " ${status_dash}"
+    _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}"
+    _face -${l}nf ${PROMPT_USER_CLR} "${USER}"
+    _face -${l}nf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}"
+    _face -${l}nf ${PROMPT_HOST_CLR} "$(hostname -s)"
+    _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}"
+    _face -${l}nf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}"
+    [[ ${#dashboard[@]} -gt 0 ]] && {
+        _face -${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}"
+        for (( dsh=0; dsh<${#dashboard[@]}; dsh++ )); do
+            [[ ${cnt} ]] && _face -${l}nf ${PROMPT_DASHSEP_CLR} "${PROMPT_SEP_CHAR}"
+            _face -${l}nf ${PROMPT_STATUS_TXT_CLR} "${dashboard[dsh]%:*}:"
+            _face -${l}nf ${PROMPT_STATUS_NUM_CLR} "${dashboard[dsh]#*:}"
+            ((cnt++))
+        done
+        _face -${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}"
+    } || {
+        loadavg=($(</proc/loadavg))
+        _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}"
+        _face -${l}nf ${PROMPT_TIME_CLR} "$(date '+%R')"
+        _face -${l}nf ${PROMPT_SLASH_CLR} " ${PROMPT_SLASH_CHAR} "
+        _face -${l}nf ${PROMPT_DATE_CLR} "$(date '+%a %b %d')"
+        _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}"
+        _face -${l}nf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}"
+        _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}"
+        for (( lavg=0; lavg<3; lavg++ )); do
+            [[ ${cnt} ]] && _face -${l}nf ${PROMPT_SEP_CLR} "${PROMPT_SEP_CHAR}"
+            _face -${l}nf ${PROMPT_LOADAVG_CLR} "${loadavg[lavg]%:*}"
+            ((cnt++))
+        done
+        _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}"
     }
 
     return 0
@@ -261,28 +314,29 @@ function prompt_git_status_dashboard()
 # short alias
 function pgsd() { prompt_git_status_dashboard; }
 
-
+#-------------------------------------------------------------------------------
 # init globals
-prompt_giles_theme
+prompt_progit_theme
 
 # set colors
-lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
-rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-lp="$(_face -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
-rp="$(_face -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
-da="$(_face -Pnf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
-sl="$(_face -Pnf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
-at="$(_face -Pnf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
-se="$(_face -Pnf ${PROMPT_SEP_CLR} "${PROMPT_SEP_CHAR}")"
-sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+l=${PROMPT_LOW_CLR:+l}
+lb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+lp="$(_face -P${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
+rp="$(_face -P${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
+da="$(_face -P${l}nf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
+sl="$(_face -P${l}nf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
+at="$(_face -P${l}nf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
+se="$(_face -P${l}nf ${PROMPT_SEP_CLR} "${PROMPT_SEP_CHAR}")"
+sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
 
 # the following arrays elements wrap the
 # calculated values in color escape codes
-h=( $(_face -Pnf ${PROMPT_HOST_CLR} " ") )
-tm=( $(_face -Pnf ${PROMPT_TIME_CLR} " ") )
-dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
-b=( $(_face -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
-d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+h=(  $(_face -P${l}nf ${PROMPT_HOST_CLR} " ") )
+tm=( $(_face -P${l}nf ${PROMPT_TIME_CLR} " ") )
+dt=( $(_face -P${l}nf ${PROMPT_DATE_CLR} " ") )
+b=(  $(_face -P${l}nf ${PROMPT_GITBRANCH_CLR} " ") )
+d=(  $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="\[\$(pgsd)\]\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+PS1="${xt[0]}\u@\H:\w${xt[1]}\[\$(pgsd)\]\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
