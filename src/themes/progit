@@ -143,13 +143,18 @@ EOF
 function prompt_git_fuzzy_branch()
 {
     local -a loc_rem=()
-    local gb=
+    local gb= gb_data=
 
     gb=$(git symbolic-ref HEAD 2>/dev/null)
     [[ ${gb} ]] && {
         gb=${gb##*/}
         loc_rem="$(git rev-list --left-right ${gb}...origin/${gb} --count)"
-        prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${gb} ${loc_rem//[[:blank:]]/:}"
+        [[ "${loc_rem//[[:blank:]]/:}" == "0:0"]] && {
+            gb_data="${gb}"
+        } || {
+            gb_data="${gb} ${loc_rem//[[:blank:]]/:}"
+        }
+        prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${gb_data}"
     } || {
         prompt_fuzzy_truncate ${PROMPT_MAXBRANCHLEN} ${PROMPT_BRANCH_FUZZFACTOR} ${PROMPT_BRANCH_DELIM} "${PROMPT_NOGIT_CHAR}"
     }
