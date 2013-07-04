@@ -167,13 +167,33 @@ function _face()
 
             # check for the globally sourced color name hash
             [[ ${FACECOLORS} ]] || {
-                # otherwise, load minimal set
-                local -A FACECOLORS=( [white]=555 [red]=500 [green]=050 [blue]=005 [black]=000 [none]="${norm}" )
+                # otherwise, load absolute bare minimal set for speed reasons
+		# the full facecolors.rgb hash is auto-loaded in libmode
+                local -A FACECOLORS=(
+		    [white]=555  [black]=000  [gray1]=111  [gray2]=222  [gray3]=333  [gray4]=444		    
+		    [red]=500    [green]=050  [blue]=005   [yellow]=550 [cyan]=055   [purple]=505
+		    [none]="${norm}"
+		)
             }
 
-            function hex2rgb() { :; }
+            function hex2rgb()
+	    {
+		local r=${1:0:2} g=${1:2:2} b=${1:4:2}
+		r=$(( ( 0x${r} / 42 ) - 1 )); [[ ${r} < 0 ]] && r=0
+		g=$(( ( 0x${g} / 42 ) - 1 )); [[ ${g} < 0 ]] && g=0
+		b=$(( ( 0x${b} / 42 ) - 1 )); [[ ${b} < 0 ]] && b=0
+		echo ${r}${g}${b}
+	    }
 
-            function dec2rgb() { :; }
+            function dec2rgb()
+	    {
+		local rgb=( ${1//,/ } )
+		local r=${rgb[0]} g=${rgb[1]} b=${rgb[2]}
+		r=$(( ( ${r} / 42 ) - 1 )); [[ ${r} < 0 ]] && r=0
+		g=$(( ( ${g} / 42 ) - 1 )); [[ ${g} < 0 ]] && g=0
+		b=$(( ( ${b} / 42 ) - 1 )); [[ ${b} < 0 ]] && b=0
+		echo ${r}${g}${b}
+	    }
 
             function convert2rgb()
             {
@@ -239,6 +259,7 @@ case "${1}" in
 
     libmode)
         export -f _face
+	[[ ${FACECOLORS} ]] || source ${0#*/}/facecolors.rgb
         ;;
 
     colors)
