@@ -1,0 +1,155 @@
+ face(8)
+
+ NAME
+     face - output colored text to a terminal or to an escape-code formated string.
+            Optionally face can be sourced and used as a library, or generate color
+            pallette output to the screen.
+
+ SYNOPSIS
+     face <-h|-H>
+
+     face <[-P] [-l] [-n] [-e] \\
+               [-f <color-name>|<face-rgb>|<hex-rgb>|<dec-rgb>] \\
+               [-b <color-name>|<face-rgb>|<hex-rgb>|<dec-rgb>] 'message'>
+
+     face <[-v] colors>
+
+     source /path/to/face <libmode>
+
+ DESCRIPTION
+     Outputs colored text to the screen, or alternatively outputs a string formated
+     for use in the \$PS1 prompt variable. Optionally can be sourced and used as a
+     library using 'libmode'. Optionally, can output color pallettes to the screen.
+
+     -b <COLOR-FORMAT>
+         Set background color.
+
+         COLOR-FORMAT can be in one of four possible input formats:
+         * 'color-name', 'face-rgb', 'hex-rgb', or 'dec-rgb'
+
+         'color-name' follows the single-word X Consortium color naming conv-
+         entions, such as 'salmon' and 'DarkGoldenrod'. These colors will be
+         approximated. 'color-name', when used in low-color mode (-l) is
+         limited to the standard console background colors;
+         white, black, red, green, blue, yellow, purple and gray.
+
+         'face-rgb' is a triplet of three numbers, each zero-thru-5, where each
+         number represents the color saturation of the color it represents.
+         For example, 500 represent a red value of 5, and green and blue values
+         of zero, representing pure red. 050 would be pure green, and 005 would
+         be pure blue. These 3 numbers in combination can produce up to 216
+         colors. When the numbers are all the same, as in 333, they represent
+         shades of the grayscale, where 000 is black, and 555 is white.
+
+         'hex-rgb' follows the standard hexadecimal rgb format without the '#'
+         prefix, such that FF0000 is red, 00FF00 is green and 0000FF is blue.
+
+         'dec-rgb' follows the standard comma-separated decimal triplet format
+         such that 255,0,0 is red, 0,255,0 is green and 0,0,255 is blue.
+
+     -e
+         Process escape sequences in the string to be output, such as \t or \n.
+         When used with -P, will preserve the sequence in the output.
+
+     -f <COLOR-FORMAT>
+         Set foreground color.
+
+         COLOR-FORMAT can be in one of four possible input formats:
+         * 'color-name', 'face-rgb', 'hex-rgb', or 'dec-rgb'
+
+         'color-name' follows the single-word X Consortium color naming conv-
+         entions, such as 'salmon' and 'DarkGoldenrod'. These colors will be
+         approximated. 'color-name', when used in low-color mode (-l) is
+         limited to the standard console background colors;
+         white, black, red, green, blue, yellow, purple and gray.
+         Foreground colors can also use the enhanced (bold) versions, ident-
+         ified by the 'bright' prefix, e.g. 'brightred' or 'brightyellow'.
+
+         'face-rgb' is a triplet of three numbers, each zero-thru-5, where each
+         number represents the color saturation of the color it represents.
+         For example, 500 represent a red value of 5, and green and blue values
+         of zero, representing pure red. 050 would be pure green, and 005 would
+         be pure blue. These 3 numbers in combination can produce up to 216
+         colors. When the numbers are all the same, as in 333, they represent
+         shades of the grayscale, where 000 is black, and 555 is white.
+
+         'hex-rgb' follows the standard hexadecimal rgb format without the '#'
+         prefix, such that FF0000 is red, 00FF00 is green and 0000FF is blue.
+
+         'dec-rgb' follows the standard comma-separated decimal triplet format
+         such that 255,0,0 is red, 0,255,0 is green and 0,0,255 is blue.
+
+     -h, -H
+         Terse and Verbose help text, respectively.
+
+     -l
+         Use low-color mode. Low-color mode is limited to the standard console
+         color pallet consisting of the following normal and enhanced (bold)
+         colors:
+         Background: white, black, red, green, blue, yellow, purple and gray.
+         Foreground: All the background colors, plus the enhanced (bold)
+         versions, identified by the 'bright' prefix, e.g 'brightred'.
+         Only low-color 'color-name' format is valid in this mode.
+
+     -n
+         Supresses newline at end of output.
+
+     -P
+         Outputs a non-evaluated, escape-code formatted string suitable for
+         use in \$PS1 prompt strings.
+
+     -v
+         Used with 'colors' parameter to output 'face-rgb' triplets with the
+         color pallette output.
+
+     colors
+         Generate color pallette examples to the screen.
+
+     libmode
+        When sourced with only the 'libmode' parameter, installs the function
+        _face() into the environment to be called via script. This speeds up
+        operation as the file 'face' does not need to be loaded on each
+        invocation.
+
+ EXAMPLES
+     In an xterm (hi-color mode), these all output white text on a red background
+      face -f white -b red ' here is my message '
+      face -f 555 -b 500 ' here is my message '
+      face -f 000000 -b FF0000 ' here is my message '
+      face -f 255,235,255 -b 255,0,0 ' here is my message '
+
+     Or in low color mode for the Linux console...
+      face -lf white -b red ' here is my message '
+
+     Generate parts of a built-up prompt string for use with \$PS1
+      str1=\$(face -Pnf 237 'my prompt string part')
+      ...
+      PS1=\"\${str1}...\${strN}\"
+
+     Use as a library from scripts...
+      source /path/to/face libmode
+     Then substitute '_face' for 'face', and all the same options apply.
+
+     Output several funky made-up color pallettes to the screen
+      face colors
+     include the 'face-rgb' input triple for each color
+      face -v colors
+
+ AUTHOR
+     Written by Christopher R. Barry
+
+ REPORTING BUGS
+     Report face bugs to <christopher.r.barry@gmail.com>
+
+ COPYRIGHT
+     Copyright © 2009 Christopher R. Barry. License GPLv3+ GNU GPL version 3
+     or later <http://gnu.org/licenses/gpl.html>.
+     This is free software: you are free to change and redistribute it.
+     There is NO WARRANTY, to the extent permitted by law.
+
+ SEE ALSO
+     prompt - a themable bash shell prompt framework
+
+
+
+ bash-color-tools                    June 2009                       face(8)
