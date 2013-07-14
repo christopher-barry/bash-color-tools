@@ -46,6 +46,9 @@ function prompt_progit_theme()
         cat > ~/.prompt-themes.d/conf/${THEME}.theme <<EOF
 # default ${THEME} theme settings for prompt
 #
+# what are we running on?
+PROMPT_PLATFORM_NAME=\$(uname)
+
 # max length of path to display
 PROMPT_MAXPATHLEN=14
 
@@ -299,7 +302,10 @@ function prompt_git_status_dashboard()
         done
         _face -${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}"
     } || {
-        loadavg=($(</proc/loadavg))
+	case ${PROMPT_PLATFORM_NAME} in
+	    Linux)  loadavg=( $(</proc/loadavg) ) ;;
+	    Darwin) loadavg=( $(sysctl -n vm.loadavg | sed 's,[{}],,g') ) ;;
+	esac
         _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}"
         _face -${l}nf ${PROMPT_TIME_CLR} "$(date '+%R')"
         _face -${l}nf ${PROMPT_SLASH_CLR} " ${PROMPT_SLASH_CHAR} "

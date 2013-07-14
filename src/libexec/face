@@ -32,6 +32,8 @@ LICENSE
     exit 1
 }
 
+PREFIX=/usr/share/bash-color-tools
+
 #-------------------------------------------------------------------------------
 # Usage
 function face_usage()
@@ -166,7 +168,7 @@ function _face()
            # default high-color mode: requires an xterm or framebuffer
 
             # check for the globally sourced color name hash
-            [[ ${FACECOLORS} ]] || {
+            [[ ${FACECOLORS[salmon]} ]] || {
                 # otherwise, load absolute bare minimal set for speed reasons
 		# the full facecolors.rgb hash is auto-loaded in libmode
                 local -A FACECOLORS=(
@@ -187,7 +189,7 @@ function _face()
 
             function dec2rgb()
 	    {
-		local rgb=( ${1//,/ } )
+		local rgb=( $(echo "${1//,/ }") )
 		local r=${rgb[0]} g=${rgb[1]} b=${rgb[2]}
 		r=$(( ( ${r} / 42 ) - 1 )); [[ ${r} < 0 ]] && r=0
 		g=$(( ( ${g} / 42 ) - 1 )); [[ ${g} < 0 ]] && g=0
@@ -205,7 +207,7 @@ function _face()
                 # in decimal format, convert
                 [[ ${colorid} =~ ^[0-2][0-5]{2},[0-2][0-5]{2},[0-2][0-5]{2} ]] && { dec2rgb ${colorid}; return 0; }
                 # in color name format, get from hash
-                [[ "${!FACECOLORS[@]}" =~ (^|[\ ]*)${colorid}($|[\ ]*) ]] && { echo ${FACECOLORS[${colorid}]}; return 0; }
+                [[ "${!FACECOLORS[@]}" =~ (^|[\ ]*)${colorid}($|[\ ]*) ]] && { echo ${FACECOLORS[${colorid}]}; return 0; } || { echo 333; return 0; }
             }
 
             function rgb2idx() { echo -n "$((16+${1:0:1}*36+${1:1:1}*6+${1:2:1}))m"; }
@@ -259,7 +261,9 @@ case "${1}" in
 
     libmode)
         export -f _face
-	[[ ${FACECOLORS} ]] || source ${0#*/}/facecolors.rgb
+	[[ ${FACECOLORS[salmon]} ]] || {
+	    source ${PREFIX}/libexec/facecolors.rgb
+	}
         ;;
 
     colors)
