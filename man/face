@@ -28,8 +28,9 @@
          'color-name' follows the single-word X Consortium color naming conv-
          entions, such as 'salmon' and 'DarkGoldenrod'. These colors will be
          approximated. 'color-name', when used in low-color mode (-l) is
-         limited to the standard console background colors;
-         white, black, red, green, blue, yellow, purple and gray.
+         limited to the standard console colors;
+         white, black, red, green, blue, yellow, purple and gray, plus enhanced
+         versions for forground only (e.g. bright<color>).
 
          'face-rgb' is a triplet of three numbers, each zero-thru-5, where each
          number represents the color saturation of the color it represents.
@@ -37,7 +38,7 @@
          of zero, representing pure red. 050 would be pure green, and 005 would
          be pure blue. These 3 numbers in combination can produce up to 216
          colors. When the numbers are all the same, as in 333, they represent
-         shades of the grayscale, where 000 is black, and 555 is white.
+         six shades of the grayscale, where 000 is black, and 555 is white.
 
          'hex-rgb' follows the standard hexadecimal rgb format without the '#'
          prefix, such that FF0000 is red, 00FF00 is green and 0000FF is blue.
@@ -70,7 +71,7 @@
            Background: white, black, red, green, blue, yellow, purple and gray.
 
            Foreground: All the background colors, plus the enhanced (bold) versions,
-                         identified by the 'bright' prefix, e.g 'brightred'.
+                       identified by the 'bright' prefix, e.g 'brightred'.
 
          Only 'color-name' color-format is valid in low-color mode.
 
