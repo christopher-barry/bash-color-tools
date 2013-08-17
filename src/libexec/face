@@ -74,15 +74,15 @@ function _face()
     while getopts ":HPb:ef:hln" opt
     do
         case ${opt} in
-            H) face_help;  exit 1      ;; # verbose help
-            P) local PS1_mode=1        ;; # use additional escapes for prompt mode
-            b) local -l bg_color=${OPTARG:-x} ;; # background color rgb/name
-            e) local E=e               ;; # process escapes codes in the  message
-            f) local -l fg_color=${OPTARG:-x} ;; # foreground color rgb/name
-            h) face_usage; exit 1      ;; # basic help
-            l) local mode=lowcolor     ;; # low-color mode
-            n) local N=n               ;; # no newline
-            *) : ;; # process commands
+            H) face_help;  exit 1          ;; # verbose help
+            P) local PS1_mode=1            ;; # use additional escapes for prompt mode
+            b) local -l bg_color=${OPTARG} ;; # background color rgb/name
+            e) local E=e                   ;; # process escapes codes in the  message
+            f) local -l fg_color=${OPTARG} ;; # foreground color rgb/name
+            h) face_usage; exit 1          ;; # basic help
+            l) local mode=lowcolor         ;; # low-color mode
+            n) local N=n                   ;; # no newline
+            *) :                           ;; # ignore unknown params
         esac
     done
 
@@ -167,15 +167,9 @@ function _face()
         *) #-------------------------------------------------------------------------------
            # default high-color mode: requires an xterm or framebuffer
 
-            # check for the globally sourced color name hash
+            # check for the color name hash
             [[ ${FACECOLORS[salmon]} ]] || {
-                # otherwise, load absolute bare minimal set for speed reasons
-                # the full facecolors.rgb hash is auto-loaded in libmode
-                local -A FACECOLORS=(
-                    [white]=555  [black]=000  [gray1]=111  [gray2]=222  [gray3]=333  [gray4]=444
-                    [red]=500    [green]=050  [blue]=005   [yellow]=550 [cyan]=055   [purple]=505
-                    [none]="${norm}"
-                )
+                source ${PREFIX}/bash-color-tools/libexec/facecolors.rgb
             }
 
             function hex2rgb()
@@ -205,7 +199,7 @@ function _face()
                 # in hex format, convert
                 [[ ${colorid} =~ ^[0-9a-f]{6}$ ]] && { hex2rgb ${colorid}; return 0; }
                 # in decimal format, convert
-                [[ ${colorid} =~ ^[0-2][0-5]{2},[0-2][0-5]{2},[0-2][0-5]{2} ]] && { dec2rgb ${colorid}; return 0; }
+                [[ ${colorid} =~ ^[0-2][0-5]{2},[0-2][0-5]{2},[0-2][0-5]{2}$ ]] && { dec2rgb ${colorid}; return 0; }
                 # in color name format, get from hash
                 [[ "${!FACECOLORS[@]}" =~ (^|[\ ]*)${colorid}($|[\ ]*) ]] && { echo ${FACECOLORS[${colorid}]}; return 0; } || { echo 333; return 0; }
             }
