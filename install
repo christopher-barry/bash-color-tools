@@ -48,7 +48,7 @@ function _install_()
     (cd ${inst_prefix}/share/bash-color-tools/libexec; ln -sf install uninstall) || return 1
 
     rsync -a ${pkg_dir}/examples ${inst_prefix}/share/doc/bash-color-tools/ || return 1
-
+    rsync -a ${pkg_dir}/man ${inst_prefix}/share/doc/bash-color-tools/ || return 1
     rsync -a $(find ${pkg_dir} -maxdepth 1 -type f -a -not -name install 2>/dev/null) \
         ${inst_prefix}/share/doc/bash-color-tools/ || return 1
 
@@ -88,7 +88,7 @@ function _uninstall_()
     unset $(set | grep PROMPT_ | awk -F= '{ print $1 }')  2>/dev/null
     unset THEME THEME_DIR
 
-    sed -i "s,^\([ ]*prompt[[:blank:]][-a-zA-Z0-9._]*$\),#\1,"  ~/.bashrc
+    sed -i "s,^\(.*/bctrc$\),#\1,"  ~/.bashrc
 
     return 0
 }

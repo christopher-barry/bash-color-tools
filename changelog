@@ -1,54 +1,62 @@
 bash-color-tools changelog
 
+2013-8-17 Christopher  Barry <christopher.r.barry@gmail.com>
+        * merge in color names code. all X colors as well as hex and
+        decimal are now allowed. run 'face -H' for more info.
+        * fix path bug for face help
+        * lots of cool stuff in the progit theme, which is now the default
+        * new .bctrc file for loading libs simplifies .bashrc mods
+        * bct finally goes to v1.0
+
 2013-4-8 Christopher Barry <christopher.r.barry@gmail.com>
-	* lots of cleanup, typo corrections in docs, etc.
-	* removed test fuzzy_truncation function.
-	* fixed a latent bug in face that only recently became an issue
-	with newer terminals.
-	* reformatted this file to emacs changelog-mode.
-	* new tag v0.9.9
+        * lots of cleanup, typo corrections in docs, etc.
+        * removed test fuzzy_truncation function.
+        * fixed a latent bug in face that only recently became an issue
+        with newer terminals.
+        * reformatted this file to emacs changelog-mode.
+        * new tag v0.9.9
 
 2012-9-15 Christopher Barry <christopher.r.barry@gmail.com>
-	* added bldtgz - generic versioned source tree tarballer
-	* new tag v0.9.8
+        * added bldtgz - generic versioned source tree tarballer
+        * new tag v0.9.8
 
 2012-9-13 Christopher Barry <christopher.r.barry@gmail.com>
-	* reverse the order of this changelog
+        * reverse the order of this changelog
 
 2012-9-12 Christopher Barry <christopher.r.barry@gmail.com>
-	* add quick start section to INSTALL
-	* refactor theme list printing
-	* refactor prompt(), adding 'save' feature
-	* complete draft of how-it-works
-	* created 'setup-prompt' command to automate user configuration
-	* moved CUSTOMIZING into ./examples/
-	* new tag v0.9.7
+        * add quick start section to INSTALL
+        * refactor theme list printing
+        * refactor prompt(), adding 'save' feature
+        * complete draft of how-it-works
+        * created 'setup-prompt' command to automate user configuration
+        * moved CUSTOMIZING into ./examples/
+        * new tag v0.9.7
 
 2012-9-08 Christopher Barry <christopher.r.barry@gmail.com>
-	* fix README.commands .bashrc example - again
-	* minor tweaks
-	* modify all numeric tests to use (( ... )) construct
+        * fix README.commands .bashrc example - again
+        * minor tweaks
+        * modify all numeric tests to use (( ... )) construct
 
 2012-9-04 Christopher Barry <christopher.r.barry@gmail.com>
-	* fix README.commands .bashrc example
-	* new tag v0.9.5
+        * fix README.commands .bashrc example
+        * new tag v0.9.5
 
 2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
-	* new tag v0.9.4
-	* add new theme 'giles'
+        * new tag v0.9.4
+        * add new theme 'giles'
 
 2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
-	* new tag v0.9.3
-	* fixed bug mis-named filename
-	* updated changelog
+        * new tag v0.9.3
+        * fixed bug mis-named filename
+        * updated changelog
 
 2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
-	* new tag v0.9.2
-	* fixed bug caused by empty directory.
+        * new tag v0.9.2
+        * fixed bug caused by empty directory.
 
 2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
-	* new tag v0.9.1
-	* fixed 'list' bug caused by moving code off to own function.
+        * new tag v0.9.1
+        * fixed 'list' bug caused by moving code off to own function.
 
 2012-9-03 Christopher Barry <christopher.r.barry@gmail.com>
-	* initial release tag 0.9.0 pushed into GitHub
+        * initial release tag 0.9.0 pushed into GitHub
