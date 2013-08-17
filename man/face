@@ -116,7 +116,7 @@
       face -f white -b red ' here is my message '
       face -f 555 -b 500 ' here is my message '
       face -f 000000 -b FF0000 ' here is my message '
-      face -f 255,235,255 -b 255,0,0 ' here is my message '
+      face -f 255,255,255 -b 255,0,0 ' here is my message '
 
      Or in low color mode for the Linux console...
       face -lf white -b red ' here is my message '

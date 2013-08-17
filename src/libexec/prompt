@@ -41,7 +41,7 @@ function prompt()
 {
     (( ${#} == 0 )) && {
         echo "Usage: prompt <theme_name|list|save>"
-        echo "'prompt save' to modify ~/.bashrc to autostart current theme"
+        echo "'prompt save' to modify ~/.bctrc to autostart current theme"
         return 1
     }
 
@@ -63,8 +63,8 @@ function prompt()
             ;;
 
         save)
-            prompt_save_to_bashrc || {
-                echo "unable to save settings to ~/.bashrc"
+            prompt_save_to_bctrc || {
+                echo "unable to save settings to ~/.bctrc"
                 return 1
             }
             echo "theme '${THEME:-builtin}' is set to autostart"

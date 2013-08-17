@@ -135,8 +135,13 @@ function _setup_etc_profile_()
 # source bash-color-tools libraries
 # for prompt and _face() usage
 BCT=${inst_prefix}/share/bash-color-tools/libexec
-if [[ -f \${BCT}/face && -f \${BCT}/prompt ]]; then
+if [[ -d \${BCT} \\
+    && -f \${BCT}/face \\
+    && -f \${BCT}/prompt \\
+    && -f \${BCT}/facecolors.rgb ]]; then
+
     # source bash-color-tools libs
+    source \${BCT}/facecolors.rgb
     source \${BCT}/face libmode
     source \${BCT}/prompt
 fi
@@ -153,22 +158,37 @@ function _setup_bashrc_()
 {
     local inst_prefix=${1}
 
-    [[ $(grep 'source.*/face\ libmode' ~/.bashrc) ]] || {
-        cat >> ~/.bashrc <<EOF
+    cat > ~/.bctrc <<EOF
 #
 # source bash-color-tools libraries
 # for prompt and _face() usage
 BCT=${inst_prefix}/share/bash-color-tools/libexec
-if [[ -f \${BCT}/face && -f \${BCT}/prompt ]]; then
+if [[ -d \${BCT} \\
+    && -f \${BCT}/face \\
+    && -f \${BCT}/prompt \\
+    && -f \${BCT}/facecolors.rgb ]]; then
+
     # source bash-color-tools libs
+    source \${BCT}/facecolors.rgb
     source \${BCT}/face libmode
     source \${BCT}/prompt
+
+else
+    echo "Error: \${BCT}/ and/or specific files within it are missing..."
+    echo "Is bash-color-tools actually installed?"
+    echo "If not, remove or comment out the 'source ~/.bctrc' code from your ~/.bashrc"
 fi
-# uncomment and select the theme you want here
-# to have prompt autostart with each shell
-#prompt git
+
+# use 'prompt save' to save current theme to autostart.
+prompt progit
 
 EOF
+
+    [[ $(grep 'source.*bctrc' ~/.bashrc) ]] || {
+        echo "" >>~/.bashrc
+        echo "# initialize bash-color-tools prompt code" >>~/.bashrc
+        echo "source ~/.bctrc" >>~/.bashrc
+
     }
 }
 
@@ -211,7 +231,7 @@ case ${0##*/} in
     install)
         _verify_permissions_ ${PREFIX} || {
             echo "Oops! you do not have permission to install into ${PREFIX}."
-            echo "use sudo, or: 'PREFIX=/some/other/dir ./install' for non-privileged installations"
+            echo "use sudo, or: 'PREFIX=/a/dir/you/own ./install' for non-privileged installations"
             exit 1
         }
         [[ "${0}" =~ ${PREFIX} ]] && { echo "uninstall, then install from the original package."; exit 1; }
@@ -250,4 +270,3 @@ case ${0##*/} in
         ;;
 
 esac
-

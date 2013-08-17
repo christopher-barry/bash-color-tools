@@ -35,9 +35,12 @@ THEME=progit
 # including local:remote commit status in the branch field:
 #  (cbarry@mybox)-[Index not updated:4|Deleted in tree:2|Untracked:7]
 #  [master 3:0][.../src/apps/]::
-# when outside a repository show time, date and 1, 5, and 15min load averages:
+#
+# when outside a repository, or if repository is clean, show time,
+# date and 1, 5, and 15min load averages:
 #  (cbarry@mybox)-(02:03 / Sun Jun 30)-(0.2|0.1|0.3)
 #  [-][.../usr/local/sbin]::
+#
 function prompt_progit_theme()
 {
     # override and customize defaults with dotfile
@@ -70,55 +73,55 @@ PROMPT_BRANCH_FUZZFACTOR=4
 # for both the linux console and xterm
 case \${TERM} in
     linux)
-	PROMPT_AT_CLR=brightgray
-	PROMPT_BRKT_CLR=cyan
-	PROMPT_DASHSEP_CLR=cyan
-	PROMPT_DASH_CLR=cyan
-	PROMPT_DATE_CLR=brightcyan
-	PROMPT_DIR_CLR=brightblue
-	PROMPT_GITBRANCH_CLR=yellow
-	PROMPT_HOST_CLR=gray
-	PROMPT_LOADAVG_CLR=gray
-	PROMPT_LOW_CLR=1
-	PROMPT_PAREN_CLR=cyan
-	PROMPT_SEP_CLR=brightgray
-	PROMPT_SLASH_CLR=cyan
-	PROMPT_STATUS_NUM_CLR=brightgray
-	PROMPT_STATUS_TXT_CLR=gray
-	PROMPT_TIME_CLR=brightcyan
-	(( \$(id -u) == 0 )) && {
-		PROMPT_SYM_CLR=brightyellow
-		PROMPT_SYM_CHAR='# '
-	} || {
-		PROMPT_SYM_CLR=cyan
-		PROMPT_SYM_CHAR=':: '
-	}
-	PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
+        PROMPT_AT_CLR=brightgray
+        PROMPT_BRKT_CLR=cyan
+        PROMPT_DASHSEP_CLR=cyan
+        PROMPT_DASH_CLR=cyan
+        PROMPT_DATE_CLR=brightcyan
+        PROMPT_DIR_CLR=brightblue
+        PROMPT_GITBRANCH_CLR=yellow
+        PROMPT_HOST_CLR=gray
+        PROMPT_LOADAVG_CLR=gray
+        PROMPT_LOW_CLR=1
+        PROMPT_PAREN_CLR=cyan
+        PROMPT_SEP_CLR=brightgray
+        PROMPT_SLASH_CLR=cyan
+        PROMPT_STATUS_NUM_CLR=brightgray
+        PROMPT_STATUS_TXT_CLR=gray
+        PROMPT_TIME_CLR=brightcyan
+        (( \$(id -u) == 0 )) && {
+                PROMPT_SYM_CLR=brightyellow
+                PROMPT_SYM_CHAR='# '
+        } || {
+                PROMPT_SYM_CLR=cyan
+                PROMPT_SYM_CHAR=':: '
+        }
+        PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
     ;;
     *)
-	PROMPT_AT_CLR=432
-	PROMPT_BRKT_CLR=122
-	PROMPT_DASHSEP_CLR=122
-	PROMPT_DASH_CLR=122
-	PROMPT_DATE_CLR=035
-	PROMPT_DIR_CLR=013
-	PROMPT_GITBRANCH_CLR=420
-	PROMPT_HOST_CLR=321
-	PROMPT_LOADAVG_CLR=222
-	PROMPT_PAREN_CLR=233
-	PROMPT_SEP_CLR=122
-	PROMPT_SLASH_CLR=122
-	PROMPT_STATUS_NUM_CLR=221
-	PROMPT_STATUS_TXT_CLR=110
-	PROMPT_TIME_CLR=035
-	(( \$(id -u) == 0 )) && {
-		PROMPT_SYM_CLR=540
-		PROMPT_SYM_CHAR='# '
-	} || {
-		PROMPT_SYM_CLR=122
-		PROMPT_SYM_CHAR=':: '
-	}
-	PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
+        PROMPT_AT_CLR=432
+        PROMPT_BRKT_CLR=122
+        PROMPT_DASHSEP_CLR=122
+        PROMPT_DASH_CLR=122
+        PROMPT_DATE_CLR=035
+        PROMPT_DIR_CLR=013
+        PROMPT_GITBRANCH_CLR=420
+        PROMPT_HOST_CLR=321
+        PROMPT_LOADAVG_CLR=222
+        PROMPT_PAREN_CLR=233
+        PROMPT_SEP_CLR=122
+        PROMPT_SLASH_CLR=122
+        PROMPT_STATUS_NUM_CLR=221
+        PROMPT_STATUS_TXT_CLR=110
+        PROMPT_TIME_CLR=035
+        (( \$(id -u) == 0 )) && {
+                PROMPT_SYM_CLR=540
+                PROMPT_SYM_CHAR='# '
+        } || {
+                PROMPT_SYM_CLR=122
+                PROMPT_SYM_CHAR=':: '
+        }
+        PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
     ;;
 esac
 # default prompt elements
@@ -302,10 +305,10 @@ function prompt_git_status_dashboard()
         done
         _face -${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}"
     } || {
-	case ${PROMPT_PLATFORM_NAME} in
-	    Linux)  loadavg=( $(</proc/loadavg) ) ;;
-	    Darwin) loadavg=( $(sysctl -n vm.loadavg | sed 's,[{}],,g') ) ;;
-	esac
+        case ${PROMPT_PLATFORM_NAME} in
+            Linux)  loadavg=( $(</proc/loadavg) ) ;;
+            Darwin) loadavg=( $(sysctl -n vm.loadavg | sed 's,[{}],,g') ) ;;
+        esac
         _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}"
         _face -${l}nf ${PROMPT_TIME_CLR} "$(date '+%R')"
         _face -${l}nf ${PROMPT_SLASH_CLR} " ${PROMPT_SLASH_CHAR} "

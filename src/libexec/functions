@@ -166,25 +166,41 @@ function prompt_theme_list()
 }
 
 #-------------------------------------------------------------------------------
-function prompt_save_to_bashrc()
+function prompt_save_to_bctrc()
 {
     local inst_prefix=$(echo ${THEME_DIR} | sed 's,/share/bash-color-tools/themes,,')
 
-    [[ $(grep 'source.*/face\ libmode' ~/.bashrc) ]] || {
-        cat >> ~/.bashrc <<EOF
+    cat > ~/.bctrc <<EOF
 #
 # source bash-color-tools libraries
 # for prompt and _face() usage
 BCT=${inst_prefix}/share/bash-color-tools/libexec
-if [[ -f \${BCT}/face && -f \${BCT}/prompt ]]; then
+if [[ -d \${BCT} \\
+    && -f \${BCT}/face \\
+    && -f \${BCT}/prompt \\
+    && -f \${BCT}/facecolors.rgb ]]; then
+
     # source bash-color-tools libs
+    source \${BCT}/facecolors.rgb
     source \${BCT}/face libmode
     source \${BCT}/prompt
+
+else
+    echo "Error: \${BCT}/ and/or specific files within it are missing..."
+    echo "Is bash-color-tools actually installed?"
+    echo "If not, remove or comment out the 'source ~/.bctrc' code from your ~/.bashrc"
 fi
-#prompt builtin
+
+# use 'prompt save' to save current theme to autostart.
+prompt ${THEME:-builtin}
 
 EOF
-    }
-    sed -i "s,^[ #]*prompt[[:blank:]][-a-zA-Z0-9._]*$,prompt ${THEME:-builtin},"  ~/.bashrc
-}
 
+    # make sure it's getting included at startup
+    [[ $(grep 'source.*bctrc' ~/.bashrc) ]] || {
+        echo "" >>~/.bashrc
+        echo "# initialize bash-color-tools prompt code" >>~/.bashrc
+        echo "source ~/.bctrc" >>~/.bashrc
+
+    }
+}
