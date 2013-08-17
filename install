@@ -124,6 +124,14 @@ function _set_themes_dir_()
 }
 
 #-------------------------------------------------------------------------------
+function _set_man_dir_()
+{
+    local inst_prefix=${1}
+    sed -i "s,^PREFIX=.*$,PREFIX==${inst_prefix}/share," \
+        ${inst_prefix}/share/bash-color-tools/libexec/face || return 1
+}
+
+#-------------------------------------------------------------------------------
 function _setup_etc_profile_()
 {
     local inst_prefix=${1}
@@ -238,6 +246,7 @@ case ${0##*/} in
         _install_ ${PREFIX} || { echo "installation failed."; exit 1; }
         _install_links_ ${PREFIX} || { echo "installation of links failed."; exit 1; }
         _set_themes_dir_ ${PREFIX} || { echo "configuring prompt themes directory failed."; exit 1; }
+        _set_man_dir_ ${PREFIX} || { echo "configuring face man directory failed."; exit 1; }
         _setup_etc_profile_ ${PREFIX} || {
             echo "permissions prevent installing global settings in:"
             echo "/etc/profile.d/bash-color-tools.sh"

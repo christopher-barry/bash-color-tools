@@ -32,7 +32,7 @@ LICENSE
     exit 1
 }
 
-PREFIX=/usr/share/bash-color-tools
+PREFIX=/usr/share
 
 #-------------------------------------------------------------------------------
 # Usage
@@ -57,12 +57,12 @@ function face_usage()
 }
 function face_help()
 {
-    [[ -f ../../doc/bash-color-tools/man/face ]] && {
-        less ../../doc/bash-color-tools/man/face
+    [[ -f ${PREFIX}/doc/bash-color-tools/man/face ]] && {
+        less ${PREFIX}/doc/bash-color-tools/man/face
     } || {
         echo >&2 "Full help file missing."
-        echo >&2 "\${INSTALL_PREFIX}/doc/bash-color-tools/man/face not found."
-        face_help
+        echo >&2 "${PREFIX}/doc/bash-color-tools/man/face not found."
+        face_usage
     }
 }
 
@@ -262,7 +262,7 @@ case "${1}" in
     libmode)
         export -f _face
         [[ ${FACECOLORS[salmon]} ]] || {
-            source ${PREFIX}/libexec/facecolors.rgb
+            source ${PREFIX}/bash-color-tools/libexec/facecolors.rgb
         }
         ;;
 
