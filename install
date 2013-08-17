@@ -127,7 +127,7 @@ function _set_themes_dir_()
 function _set_man_dir_()
 {
     local inst_prefix=${1}
-    sed -i "s,^PREFIX=.*$,PREFIX==${inst_prefix}/share," \
+    sed -i "s,^PREFIX=.*$,PREFIX=${inst_prefix}/share," \
         ${inst_prefix}/share/bash-color-tools/libexec/face || return 1
 }
 
