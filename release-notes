@@ -1,7 +1,7 @@
 
 ###########################   IMPORTANT   ###########################
 
-Affects all theme config files prior to v1.1
+Affects all theme config files prior to v1.1.2
 
 The config file format for theme configurations in ~/.prompt-themes.d
 has changed, and WILL lead to breakage if left unchanged.

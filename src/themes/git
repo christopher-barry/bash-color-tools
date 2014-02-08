@@ -50,7 +50,7 @@ PROMPT_MAXBRANCHLEN=14
 #
 # default color rgb values for prompt elements
 case \${TERM} in
-    Linux)
+    linux)
         PROMPT_LOW_CLR=1
         PROMPT_BRKT_CLR=cyan
         PROMPT_GITBRANCH_CLR=yellow
