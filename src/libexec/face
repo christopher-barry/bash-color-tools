@@ -199,8 +199,9 @@ function _face()
                 # in hex format, convert
                 [[ ${colorid} =~ ^[0-9a-f]{6}$ ]] && { hex2rgb ${colorid}; return 0; }
                 # in decimal format, convert
+                #colorid=223,122,12
                 [[ ${colorid} =~ ^[[:digit:]]+,[[:digit:]]+,[[:digit:]]+$ ]] && {
-                    local decs=( ${colorid//,/ /} )
+                    local decs=( ${colorid//,/ } )
                     local -i invalid
                     for d in ${decs[@]}; do
                         (( d > 255 )) && ((invalid++))
