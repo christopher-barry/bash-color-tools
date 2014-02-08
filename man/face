@@ -44,11 +44,12 @@
          prefix, such that FF0000 is red, 00FF00 is green and 0000FF is blue.
 
          'dec-rgb' follows the standard comma-separated decimal triplet format
-         such that 255,000,000 is red, 000,255,000 is green and 000,000,255 is blue.
+         such that 255,0,0 is red, 0,255,0 is green and 0,0,255 is blue.
 
          NOTES:
-           * Each 'dec-rgb' component must be three (3) digits to be valid.
            * Invalid specifications will be rendered neutral gray.
+           * color-name, hex-rgb, and dec-rgb are approximations due to limited
+             color space available in the shell
 
      -b <color-format>
          Set background color.
@@ -61,7 +62,7 @@
          Set foreground color.
 
      -h, -H
-         Terse and Verbose help text, respectively.
+         Terse and verbose help text, respectively.
 
      -l
          Use low-color mode. Low-color mode is limited to the standard console
@@ -100,7 +101,7 @@
       face -f white -b red ' here is my message '
       face -f 555 -b 500 ' here is my message '
       face -f 000000 -b FF0000 ' here is my message '
-      face -f 255,255,255 -b 255,000,000 ' here is my message '
+      face -f 255,255,255 -b 255,0,0 ' here is my message '
 
      Or in low color mode for the Linux console...
       face -lf white -b red ' here is my message '
@@ -126,8 +127,10 @@
      Report face bugs to <christopher.r.barry@gmail.com>
 
  COPYRIGHT
-     Copyright © 2009 Christopher R. Barry. License GPLv3+ GNU GPL version 3
-     or later <http://gnu.org/licenses/gpl.html>.
+     Copyright © 2007-2014 Christopher R. Barry
+     License GPLv3+ GNU GPL version 3 or later
+       <http://gnu.org/licenses/gpl.html>.
+
      This is free software: you are free to change and redistribute it.
      There is NO WARRANTY, to the extent permitted by law.
 
@@ -135,5 +138,4 @@
      prompt - a themable bash shell prompt framework
 
 
-
- bash-color-tools                    June 2009                       face(8)
+ bash-color-tools                   February 2014                       face(8)
