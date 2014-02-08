@@ -1,56 +1,78 @@
-bash-color-tools
-================================================================================
-    Copyright 2007-2012 Christopher Barry <christopher.r.barry@gmail.com>
 
-    This file is part of the bash-color-tools
+bash-color-tools was created solve a few problems that were always an
+annoyance to me, and that there was no simple existing solutions for:
 
-    bash-color-tools is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Bash Prompt Color Themes
+* I wanted an easy way to modify, set, and save Color Bash Prompt
+  setups. The standard 8 colors are simply ugly, so being able to have
+  hundreds of colors to choose from was a must. Plus, being able to
+  easily and simply change the colors at will, ideally by X Color
+  Name, or a standard hex or decimal value would also be great.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+Color Echo command
+* I wanted an easy to use full-color echo command for use in scripts
+  that worked just like echo, but could output in full color - not
+  just the boring 8 colors that most HOW-TOs would teach you how to
+  generate. And it had to insulate me from those horrible escape
+  codes! Ideally, it could output those codes un-evaluated, for
+  setting into variables if desired, say to put into the $PS1
+  variable.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-================================================================================
-
-bash-color-tools came about mostly out of annoyance that someone
-hadn't already done it.
-
-I already had a color prompt I hacked together years ago after reading
-the bash-prompt-howto that I had dragged around from box to box,
-various work places, etc. It mostly never changed because it was such
-a pain to deal with it.
-
-Then I had a need for colorizing text generically, in other non-prompt
-bash applications, and set out to create a truly useful hi-color echo
-command that was as easy to use as echo, and hid all the escape code
-stuff from the user. From that effort, 'face' was born.
-
-Then, once I started using git, I went back to my old prompt script
-'myprompt', and started hacking in branch support. After about 5
-minutes I realized I could leverage face for all of this and even
-allow dotfiles and themeing, and set off to create what is finally the
-'prompt' feature of bash-color-tools. Only took like 5 years to
-actually do it.
-
-All of this was not without some really annoying hurdles, and I got
-some excellent help along the way from some great friends like:
-
-Michael Brooks: for the index color math code
-Buck Ryan:      for helping track down the nasty escaping bug
-
-Anyway, here it is and hopefully you'll find it useful. If you do, let
-me know. If you create some cool themes, (see ./examples/CUSTOMIZING)
-send them in and I'll include them in the distribution.
+I tried a few python color prompt scripts, but the lag was
+unbearable. I needed it to be fast. It needed to be in written in
+Bash, it needed to be lightweight, and it needed to stay in memory as
+much as possible to give the best performance possible.
 
 
-Cheers,
--C
+So this is exactly what bash-color-tools provides:
+
+'prompt'
+* A full-color Bash Prompt theme framework that's easily customizable,
+  and uses theme plugins to allow you to easily change the colors of
+  every prompt string element, extend existing themes, or even create
+  your own themes by starting off with the provided theme template and
+  going from there. There's instructions in the examples directory to
+  help you with that. Provides the ability to quickly toggle between
+  the different themes. Also allows low-color mode themes for the
+  Linux Terminal. If you create a cool theme, let me know and I'll add
+  it in.
+
+'face'
+* A full-color echo-like command with all the semantics of echo, plus
+  extensions for background and forground color designation, and can
+  even output raw escape codes if you need them.
+
+'_face'
+* A sourceable library for your scripts, so all invocations of face
+  come from memory, rather than running the command off disk.
 
 
+Standard Color Bash Prompt Themes:
+
+* 'progit' is the default theme, and provides a very full-featured git
+  status dashboard when inside a repository, and the date/time and
+  current system load data when in a regular directory. It
+  automatically 'fuzzy-truncates' (adjustable length and fuzzyness
+  values) both the current dir path and the branch names to keep the
+  prompt at a resonable length. The git dashboard shows the number of
+  untracked files, index vs. tree status, merge status, commit status,
+  etc., and the branch field will indicate if the remote is out of
+  sync with your current tree. When your tree is up to date, it shows
+  the current branch, and the standard time/date and system load
+  header. This is quite possibly the most extensive git info in any
+  prompt anywhere, while still being very fast and unobtrusive.
+
+* 'git' is progit's predecessor, and not quite as fully featured. It
+  does provide the basics though, and is a bit faster if you have a
+  low powered machine.
+
+* 'giles' is an homage to Giles Orr, the original Bash Prompt Howto
+  author.
+
+* 'vms' is an homage to the VMS Operating System I used so many years
+  ago.
+
+See the screenshots directory for examples of both the standard prompt
+themes, as well as examples of the 'face' color echo command usage.
+View them numerically, and use the 'Raw' mode for full resolution
+images.
