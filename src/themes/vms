@@ -105,6 +105,6 @@ d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 [[ ${PROMPT_LOW_CLR} ]] && {
     # remove xterm titlebar code in console mode
     PS1="${lb}${u}${a}${h}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
-] || {
+} || {
     PS1="${xt[0]}\u@\H:\w${xt[1]}${lb}${u}${a}${h}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
 }
