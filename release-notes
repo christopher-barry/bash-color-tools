@@ -1,0 +1,19 @@
+
+###########################   IMPORTANT   ###########################
+
+Affects all theme config files prior to v1.1
+
+The config file format for theme configurations in ~/.prompt-themes.d
+has changed, and WILL lead to breakage if left unchanged.
+
+You should either rename (if you modified them) or delete them, then
+log out and back in to automatically re-create the new default ones as
+you reload different themes.
+
+Until I can hack up a nice way around it, you'll need to manually
+migrate any previous color or character changes you made over to the
+new config file(s). Sorry for the inconvenience.
+
+-C
+
+#####################################################################

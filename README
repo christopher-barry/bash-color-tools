@@ -76,3 +76,5 @@ See the screenshots directory for examples of both the standard prompt
 themes, as well as examples of the 'face' color echo command usage.
 View them numerically, and use the 'Raw' mode for full resolution
 images.
+
+Tested on Linux and Mac OSX (after installing bash v4.x)

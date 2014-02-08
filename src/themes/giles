@@ -130,29 +130,33 @@ function prompt_git_fuzzy_branch()
 # short alias
 function pgfb() { prompt_git_fuzzy_branch "${@}"; }
 
+
 # init globals
 prompt_giles_theme
 
 # set low color mode if needed
-plc=${PROMPT_LOW_CLR}
+l=${PROMPT_LOW_CLR:+l}
 # set colors
-lb="$(_face ${plc:+ -l} -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
-rb="$(_face ${plc:+ -l} -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-lp="$(_face ${plc:+ -l} -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
-rp="$(_face ${plc:+ -l} -Pnf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
-da="$(_face ${plc:+ -l} -Pnf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
-sl="$(_face ${plc:+ -l} -Pnf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
-at="$(_face ${plc:+ -l} -Pnf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
-sc="$(_face ${plc:+ -l} -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+lb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+lp="$(_face -P${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}")"
+rp="$(_face -P${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_RPAREN_CHAR}")"
+da="$(_face -P${l}nf ${PROMPT_DASH_CLR} "${PROMPT_DASH_CHAR}")"
+sl="$(_face -P${l}nf ${PROMPT_SLASH_CLR} "${PROMPT_SLASH_CHAR}")"
+at="$(_face -P${l}nf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}")"
+sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
 
 # the following arrays elements wrap the
 # calculated values in color escape codes
-h=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_HOST_CLR} " ") )
-tm=( $(_face ${plc:+ -l} -Pnf ${PROMPT_TIME_CLR} " ") )
-dt=( $(_face ${plc:+ -l} -Pnf ${PROMPT_DATE_CLR} " ") )
-b=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
-d=(  $(_face ${plc:+ -l} -Pnf ${PROMPT_DIR_CLR} " ") )
+h=(  $(_face -P${l}nf ${PROMPT_HOST_CLR} " ") )
+tm=( $(_face -P${l}nf ${PROMPT_TIME_CLR} " ") )
+dt=( $(_face -P${l}nf ${PROMPT_DATE_CLR} " ") )
+b=(  $(_face -P${l}nf ${PROMPT_GITBRANCH_CLR} " ") )
+d=(  $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="${xt[0]}\u@\h:\w${xt[1]}${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
-
+[[ ${PROMPT_LOW_CLR} ]] && {
+    PS1="${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+} || {
+    PS1="${xt[0]}\u@\h:\w${xt[1]}${lp}${at}${h[0]}\H${h[1]}${rp}${da}${lp}${tm[0]}\$(date '+%R')${tm[1]} ${sl} ${dt[0]}\d${dt[1]}${rp}\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+}

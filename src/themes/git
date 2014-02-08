@@ -49,10 +49,21 @@ PROMPT_MAXBRANCHLEN=14
 # to see what color == what rgb value
 #
 # default color rgb values for prompt elements
-PROMPT_BRKT_CLR=011
-PROMPT_GITBRANCH_CLR=210
-PROMPT_DIR_CLR=235
-PROMPT_SYM_CLR=133
+case \${TERM} in
+    Linux)
+        PROMPT_LOW_CLR=1
+        PROMPT_BRKT_CLR=cyan
+        PROMPT_GITBRANCH_CLR=yellow
+        PROMPT_DIR_CLR=blue
+        PROMPT_SYM_CLR=brightblue
+    ;;
+    *)
+        PROMPT_BRKT_CLR=011
+        PROMPT_GITBRANCH_CLR=210
+        PROMPT_DIR_CLR=235
+        PROMPT_SYM_CLR=133
+    ;;
+esac
 
 # default prompt elements
 PROMPT_NOGIT_CHAR='-'
@@ -88,18 +99,24 @@ function prompt_git_branch()
 # short alias
 function pgb() { prompt_git_branch "${@}"; }
 
+
 # init globals
 prompt_git_theme
 
 # set colors
-lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
-rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+l=${PROMPT_LOW_CLR:+l}
+lb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
 # the following two arrays elements wrap the
 # calculated branch and dir in color escape codes
-d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
-b=( $(_face -Pnf ${PROMPT_GITBRANCH_CLR} " ") )
+d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
+b=( $(_face -P${l}nf ${PROMPT_GITBRANCH_CLR} " ") )
 
 # set the prompt
-PS1="${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
-
+[[ ${PROMPT_LOW_COLOR} ]] && {
+    # remove xterm titlebar code in console mode
+    PS1="${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+} || {
+    PS1="${xt[0]}\u@\H:\w${xt[1]}${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+}

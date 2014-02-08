@@ -354,4 +354,9 @@ b=(  $(_face -P${l}nf ${PROMPT_GITBRANCH_CLR} " ") )
 d=(  $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="${xt[0]}\u@\H:\w${xt[1]}\[\$(pgsd)\]\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+[[ ${PROMPT_LOW_CLR} ]] && {
+    # remove xterm titlebar code in console mode
+    PS1="\[\$(pgsd)\]\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+} || {
+    PS1="${xt[0]}\u@\H:\w${xt[1]}\[\$(pgsd)\]\n${lb}${b[0]}\$(pgfb)${b[1]}${rb}${lb}${d[0]}\$(pgfp)${d[1]}${rb}${sc}"
+}

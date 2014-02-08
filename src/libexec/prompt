@@ -91,28 +91,44 @@ function prompt()
         # max length of path to display
         PROMPT_MAXPATHLEN=20
         # default color rgb for prompt elements
-        PROMPT_USER_CLR=011
-        PROMPT_AT_CLR=122
-        PROMPT_HOST_CLR=011
-        PROMPT_DIR_CLR=135
-        PROMPT_SYM_CLR=025
+        case ${TERM} in
+            Linux)
+                PROMPT_LOW_CLR=1
+                PROMPT_USER_CLR=cyan
+                PROMPT_AT_CLR=gray
+                PROMPT_HOST_CLR=cyan
+                PROMPT_DIR_CLR=blue
+                PROMPT_SYM_CLR=brightblue
+                ;;
+            *)
+                PROMPT_USER_CLR=011
+                PROMPT_AT_CLR=122
+                PROMPT_HOST_CLR=011
+                PROMPT_DIR_CLR=135
+                PROMPT_SYM_CLR=025
+                ;;
+        esac
         (( $(id -u) == 0 )) && {
             PROMPT_SYM_CHAR='# '
         } || {
             PROMPT_SYM_CHAR='$ '
         }
-        u="$(_face -Pnf ${PROMPT_USER_CLR} "$(whoami)")"
-        a="$(_face -Pnf ${PROMPT_AT_CLR} "@")"
-        h="$(_face -Pnf ${PROMPT_HOST_CLR} "${HOSTNAME}:")"
-        rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-        sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+        l=${PROMPT_LOW_CLR:+l}
+        u="$(_face -P${l}nf ${PROMPT_USER_CLR} "$(whoami)")"
+        a="$(_face -P${l}nf ${PROMPT_AT_CLR} "@")"
+        h="$(_face -P${l}nf ${PROMPT_HOST_CLR} "${HOSTNAME}:")"
+        rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+        sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
         # the following array wraps the
         # calculated dir in color escape codes
-        d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+        d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
         # set the default prompt
-        PS1="${xt[0]}\u@\h:\w${xt[1]}${u}${a}${h}${d[0]}\$(pgp)${d[1]}${sc}"
-
+        [[ ${PROMPT_LOW_CLR} ]] && {
+            PS1="${xt[1]}${u}${a}${h}${d[0]}\$(pgp)${d[1]}${sc}"
+        } || {
+            PS1="${xt[0]}\u@\h:\w${xt[1]}${u}${a}${h}${d[0]}\$(pgp)${d[1]}${sc}"
+        }
     fi
 
 }

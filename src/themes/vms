@@ -47,12 +47,25 @@ PROMPT_MAXPATHLEN=14
 # to see what color == what rgb value
 #
 # default color rgb values for prompt elements
-PROMPT_BRKT_CLR=011
-PROMPT_DIR_CLR=235
-PROMPT_SYM_CLR=133
-PROMPT_USER_CLR=022
-PROMPT_AT_CLR=233
-PROMPT_HOST_CLR=022
+case \${TERM} in
+    Linux)
+        PROMPT_LOW_CLR=1
+        PROMPT_BRKT_CLR=cyan
+        PROMPT_DIR_CLR=blue
+        PROMPT_SYM_CLR=brightblue
+        PROMPT_USER_CLR=yellow
+        PROMPT_AT_CLR=gray
+        PROMPT_HOST_CLR=brightyellow
+    ;;
+    *)
+        PROMPT_BRKT_CLR=011
+        PROMPT_DIR_CLR=235
+        PROMPT_SYM_CLR=133
+        PROMPT_USER_CLR=022
+        PROMPT_AT_CLR=233
+        PROMPT_HOST_CLR=022
+    ;;
+esac
 
 # default prompt elements
 PROMPT_LBRKT_CHAR='['
@@ -72,20 +85,26 @@ EOF
 }
 #
 
+
 # init globals
 prompt_vms_theme
 
 # set colors
-lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
-rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
-u="$(_face -Pnf ${PROMPT_USER_CLR} "$(whoami)")"
-a="$(_face -Pnf ${PROMPT_AT_CLR} "@")"
-h="$(_face -Pnf ${PROMPT_HOST_CLR} "${HOSTNAME}")"
+l=${PROMPT_LOW_CLR:+l}
+lb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+u="$(_face -P${l}nf ${PROMPT_USER_CLR} "$(whoami)")"
+a="$(_face -P${l}nf ${PROMPT_AT_CLR} "@")"
+h="$(_face -P${l}nf ${PROMPT_HOST_CLR} "${HOSTNAME}")"
 # the following arrays elements wrap
 # the dir in color escape codes
-d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="${lb}${u}${a}${h}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
-
+[[ ${PROMPT_LOW_CLR} ]] && {
+    # remove xterm titlebar code in console mode
+    PS1="${lb}${u}${a}${h}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+] || {
+    PS1="${xt[0]}\u@\H:\w${xt[1]}${lb}${u}${a}${h}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+}

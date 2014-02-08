@@ -249,7 +249,7 @@ Next, we set 'very' short prompt-string varnames to the output of the
 face command.
 
 # set colors
-lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+lb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
 
 Let's break down what just happened in the line above: face was called
 with 3 switches, -P which puts face in 'prompt string' output mode, -n
@@ -263,8 +263,8 @@ OK, so same thing for the two vars below; we're simply wrapping the
 character elements in escape codes used by the terminal to generate
 color text.
 
-rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
 
 Here's where it gets a bit tricky. Whenever you run a function inline
 in the PS1 to do things like output the current directory, the current
@@ -285,8 +285,8 @@ use to color, then reset to normal, the function's output.
 
 # the following two arrays elements wrap the
 # calculated date and dir in color escape codes
-dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
-d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+dt=( $(_face -P${l}nf ${PROMPT_DATE_CLR} " ") )
+d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
 Now, the moment you've all been waiting for - the &$^%#$# prompt string!
 
@@ -325,5 +325,3 @@ that's for your imagination. Me, I need to go get another beer.
 
 Cheers,
 -C
-
-

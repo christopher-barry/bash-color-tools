@@ -1,5 +1,12 @@
 bash-color-tools changelog
 
+2014-2-7  Christopher  Barry <christopher.r.barry@gmail.com>
+        * added screenshots of prompt and face in action
+        * fixed a low-color mode bug wrt xterm titlebar code
+        * updated config file format to address above
+        * fixed a color rendering bug when an invalid rgb was entered
+        * new tag v1.1
+
 2013-8-17 Christopher  Barry <christopher.r.barry@gmail.com>
         * merge in color names code. all X colors as well as hex and
         decimal are now allowed. run 'face -H' for more info.

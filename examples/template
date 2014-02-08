@@ -47,10 +47,21 @@ PROMPT_MAXPATHLEN=14
 # to see what color == what rgb value
 #
 # default color rgb values for prompt elements
-PROMPT_BRKT_CLR=011
-PROMPT_DATE_CLR=110
-PROMPT_DIR_CLR=024
-PROMPT_SYM_CLR=133
+case \${TERM} in
+    Linux)
+        PROMPT_LOW_CLR=1
+        PROMPT_BRKT_CLR=cyan
+        PROMPT_DATE_CLR=gray
+        PROMPT_DIR_CLR=blue
+        PROMPT_SYM_CLR=brightblue
+    ;;
+    *)
+        PROMPT_BRKT_CLR=011
+        PROMPT_DATE_CLR=110
+        PROMPT_DIR_CLR=024
+        PROMPT_SYM_CLR=133
+    ;;
+esac
 
 # default prompt elements
 PROMPT_LBRKT_CHAR='['
@@ -71,18 +82,24 @@ EOF
 }
 #
 
+
 # init globals
 prompt_template_theme
 
 # set colors
-lb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
-rb="$(_face -Pnf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
-sc="$(_face -Pnf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
+l=${PROMPT_LOW_CLR:+l}
+lb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_LBRKT_CHAR}")"
+rb="$(_face -P${l}nf ${PROMPT_BRKT_CLR} "${PROMPT_RBRKT_CHAR}")"
+sc="$(_face -P${l}nf ${PROMPT_SYM_CLR} "${PROMPT_SYM_CHAR}")"
 # the following two arrays elements wrap the
 # calculated date and dir in color escape codes
-dt=( $(_face -Pnf ${PROMPT_DATE_CLR} " ") )
-d=( $(_face -Pnf ${PROMPT_DIR_CLR} " ") )
+dt=( $(_face -P${l}nf ${PROMPT_DATE_CLR} " ") )
+d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 
 # set the prompt
-PS1="${xt[0]}\u@\h:\w${xt[1]}${lb}${dt[0]}\$(pdt)${dt[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
-
+[[ ${PROMPT_LOW_CLR} ]] && {
+    # remove xterm titlebar code in console mode
+    PS1="${lb}${dt[0]}\$(pdt)${dt[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+} || {
+    PS1="${xt[0]}\u@\h:\w${xt[1]}${lb}${dt[0]}\$(pdt)${dt[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
+}

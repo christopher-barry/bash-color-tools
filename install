@@ -214,6 +214,11 @@ function _welcome_output_()
     ${inst_prefix}/bin/face -nf 015 " to load the libs, then run: "
     ${inst_prefix}/bin/face -f  033 "prompt list"
     ${inst_prefix}/bin/face -f  015 "for a list of available prompt themes"
+    echo
+
+    [[ -e ${inst_prefix}/share/doc/bash-color-tools/release-notes ]] && {
+        less ${inst_prefix}/share/doc/bash-color-tools/release-notes
+    }
 }
 
 #-------------------------------------------------------------------------------
