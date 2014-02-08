@@ -205,6 +205,10 @@ function _welcome_output_()
 {
     local inst_prefix=${1}
 
+    [[ -e ${inst_prefix}/share/doc/bash-color-tools/release-notes ]] && {
+        less ${inst_prefix}/share/doc/bash-color-tools/release-notes
+    }
+
     ${inst_prefix}/bin/face -f  042 "bash-color-tools are installed"
     ${inst_prefix}/bin/face -nf 015 "see "
     ${inst_prefix}/bin/face -nf 033 "${inst_prefix}/share/doc/bash-color-tools/* "
@@ -216,9 +220,6 @@ function _welcome_output_()
     ${inst_prefix}/bin/face -f  015 "for a list of available prompt themes"
     echo
 
-    [[ -e ${inst_prefix}/share/doc/bash-color-tools/release-notes ]] && {
-        less ${inst_prefix}/share/doc/bash-color-tools/release-notes
-    }
 }
 
 #-------------------------------------------------------------------------------
