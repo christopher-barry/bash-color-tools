@@ -1,6 +1,10 @@
 bash-color-tools changelog
 
 2014-2-8  Christopher  Barry <christopher.r.barry@gmail.com>
+        * fix more friggin typos...
+        * new tag v1.1.2
+
+2014-2-8  Christopher  Barry <christopher.r.barry@gmail.com>
         * fix typo
         * output release notes ahead of normal welcome output
         * new tag v1.1.1
