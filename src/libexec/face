@@ -201,7 +201,9 @@ function _face()
                 # in decimal format, convert
                 [[ ${colorid} =~ ^[0-2][0-5]{2},[0-2][0-5]{2},[0-2][0-5]{2}$ ]] && { dec2rgb ${colorid}; return 0; }
                 # in color name format, get from hash
-                [[ "${!FACECOLORS[@]}" =~ (^|[\ ]*)${colorid}($|[\ ]*) ]] && { echo ${FACECOLORS[${colorid}]}; return 0; } || { echo 333; return 0; }
+                [[ "${!FACECOLORS[@]}" =~ (^|[\ ]*)${colorid}($|[\ ]*) ]] && { echo ${FACECOLORS[${colorid}]}; return 0; }
+                # fallthrough to medium gray if format was wrong
+                echo 333; return 0
             }
 
             function rgb2idx() { echo -n "$((16+${1:0:1}*36+${1:1:1}*6+${1:2:1}))m"; }
