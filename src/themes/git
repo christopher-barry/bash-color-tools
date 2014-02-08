@@ -114,7 +114,7 @@ d=( $(_face -P${l}nf ${PROMPT_DIR_CLR} " ") )
 b=( $(_face -P${l}nf ${PROMPT_GITBRANCH_CLR} " ") )
 
 # set the prompt
-[[ ${PROMPT_LOW_COLOR} ]] && {
+[[ ${PROMPT_LOW_CLR} ]] && {
     # remove xterm titlebar code in console mode
     PS1="${lb}${b[0]}\$(pgb)${b[1]}${rb}${lb}${d[0]}\$(pgp)${d[1]}${rb}${sc}"
 } || {
