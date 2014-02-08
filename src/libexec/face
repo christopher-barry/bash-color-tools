@@ -199,7 +199,14 @@ function _face()
                 # in hex format, convert
                 [[ ${colorid} =~ ^[0-9a-f]{6}$ ]] && { hex2rgb ${colorid}; return 0; }
                 # in decimal format, convert
-                [[ ${colorid} =~ ^[0-2][0-5]{2},[0-2][0-5]{2},[0-2][0-5]{2}$ ]] && { dec2rgb ${colorid}; return 0; }
+                [[ ${colorid} =~ ^[[:digit:]]+,[[:digit:]]+,[[:digit:]]+$ ]] && {
+                    local decs=( ${colorid//,/ /} )
+                    local -i invalid
+                    for d in ${decs[@]}; do
+                        (( d > 255 )) && ((invalid++))
+                    done
+                    [[ ! ${invalid} ]] && { dec2rgb ${colorid}; return 0; }
+                }
                 # in color name format, get from hash
                 [[ "${!FACECOLORS[@]}" =~ (^|[\ ]*)${colorid}($|[\ ]*) ]] && { echo ${FACECOLORS[${colorid}]}; return 0; }
                 # fallthrough to medium gray if format was wrong
