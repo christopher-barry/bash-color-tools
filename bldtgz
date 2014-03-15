@@ -30,9 +30,9 @@ LICENSE
 #-------------------------------------------------------------------------------
 function _get_pkg_version_()
 {
-    git describe || {
-        echo "Oops! not a git source dir."
-        exit 1
+    git describe 2>/dev/null || {
+        date | sed -e 's/\ /_/g' -e 's/\:/-/g'
+        echo >&2 "Warning: not a git source dir, using *now* as version instead."
     }
 }
 
@@ -72,23 +72,25 @@ function _create_tarball_()
     )
 
     mv ${build_dir%/*}/${pkg_name}.tgz ${0%/*}/../ || exit 1
-    echo "New package: ${0%/*}/../${pkg_name}.tgz"
+    echo >&2 "New package: ${0%/*}/../${pkg_name}.tgz"
     (( ${?} == 0 )) && rm -rf ${build_dir%/*} || return 1
 }
 
 #-------------------------------------------------------------------------------
 function _main_()
 {
-    local pkg_name=$(_gen_pkg_name_) || return ${?}
+    local pkg_name=
+    pkg_name=$(_gen_pkg_name_) || return ${?}
+
     local build_dir=
     build_dir=$(_create_build_dir_ ${pkg_name})
     [[ -d ${build_dir} ]] || {
-        echo "Error: failed to create build directory '${build_dir}'"
+        echo >&2 "Error: failed to create build directory '${build_dir}'"
         return 1
     }
 
     _create_tarball_ ${pkg_name} ${build_dir} || {
-        echo "Error: failed to create tarball"
+        echo >&2 "Error: failed to create tarball"
         return 1
     }
 
