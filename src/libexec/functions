@@ -65,6 +65,18 @@ function prompt_date_time()
 # short alias
 function pdt() { prompt_date_time; }
 
+#-------------------------------------------------------------------------------
+# output if we're shelled out of Midnight Commander or not
+function in_midnight_commander()
+{
+    (( SHLVL > 1 )) && [[ ${MC_SID} ]] && [[ ${MC_TMPDIR} ]] && {
+        echo "MC"
+    } || {
+        echo ""
+    }
+}
+# short alias
+function imc() { in_midnight_commander; }
 
 #===============================================================================
 # utility functions used by other function lib functions - no aliases

@@ -97,6 +97,7 @@ case \${TERM} in
                 PROMPT_SYM_CHAR=':: '
         }
         PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
+        PROMPT_MC_CLR=red
     ;;
     *)
         PROMPT_AT_CLR=432
@@ -122,6 +123,7 @@ case \${TERM} in
                 PROMPT_SYM_CHAR=':: '
         }
         PROMPT_USER_CLR=\${PROMPT_SYM_CLR}
+        PROMPT_MC_CLR=500
     ;;
 esac
 # default prompt elements
@@ -289,6 +291,7 @@ function prompt_git_status_dashboard()
 
     fi
 
+    _face -${l}nf ${PROMPT_MC_CLR} "$(in_midnight_commander)"
     _face -${l}nf ${PROMPT_PAREN_CLR} "${PROMPT_LPAREN_CHAR}"
     _face -${l}nf ${PROMPT_USER_CLR} "${USER}"
     _face -${l}nf ${PROMPT_AT_CLR} "${PROMPT_AT_CHAR}"
