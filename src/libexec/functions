@@ -70,7 +70,7 @@ function pdt() { prompt_date_time; }
 function in_midnight_commander()
 {
     (( SHLVL > 1 )) && [[ ${MC_SID} ]] && [[ ${MC_TMPDIR} ]] && {
-        echo "MC"
+        echo -e ${PROMPT_MC_CHAR}
     } || {
         echo ""
     }
