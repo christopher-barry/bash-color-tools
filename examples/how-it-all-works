@@ -47,6 +47,9 @@ the three primary colors are Red, Green and Blue (rgb).
 -b <rgb> sets background color
 Use -H for more help with face
 
+https://en.wikipedia.org/wiki/List_of_software_palettes#6_level_RGB
+describes the indexed type of color used in color generating engine.
+
 540 means red=5,green=4,blue=0. Each of r, g and b can be a value of 0
 thru 5, e.g. r=(0 thru 5), g=(0 thru 5) and b=(0 thru 5), so the total
 range is 000 (black) to 555 (white). The displayed color is the
@@ -130,8 +133,3 @@ The same fuzzy truncation happens for the branch names as well in the
 truncate at, but all of this is easily customizable.
 
 See CUSTOMIZING for details on creating your own themes.
-
-
-
-
-
