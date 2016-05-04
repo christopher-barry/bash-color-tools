@@ -4,14 +4,14 @@
 bash-color-tools was created to solve a two problems that there were
 no simple existing solutions for:
 
-## Bash Prompt Color Themes
+### Bash Prompt Color Themes
 * I wanted an easy way to modify, set, and save Color Bash Prompt
   setups. The standard 8 colors are simply ugly, so being able to have
   hundreds of colors to choose from was a must. Plus, being able to
   easily and simply change the colors at will, ideally by X Color
   Name, or a standard hex or decimal value would also be great.
 
-## Color Echo command
+### Color Echo command
 * I wanted an easy to use full-color echo command for use in scripts
   that worked just like echo, but could output in full color - not
   just the boring 8 colors that most HOW-TOs would teach you how to
@@ -29,7 +29,7 @@ give the lowest latency script performance possible.
 
 So, this is exactly what bash-color-tools sets out to provide:
 
-## 'prompt'
+### 'prompt'
 * A full-color Bash Prompt theme framework that's easily customizable,
   and uses theme plugins to allow you to easily change the colors of
   every prompt string element, extend existing themes, or even create
@@ -40,13 +40,13 @@ So, this is exactly what bash-color-tools sets out to provide:
   Linux Terminal. If you create a cool theme, let me know and I'll add
   it in.
 
-## 'face'
+### 'face'
 * A full-color echo-like command with all the semantics of echo, plus
   extensions for background and forground color designation, and can
   even output raw escape coded strings if you need them (which, as it
   turns out, prompt does).
 
-## '_face'
+### '_face'
 * A sourceable library for your scripts, so all invocations of face
   come from memory, rather than running the command off disk.
 
@@ -77,7 +77,7 @@ So, this is exactly what bash-color-tools sets out to provide:
   ago.
 
 
-# Screenshots
+## Screenshots
 
 ![prompt image 1](/screenshots/screenshot-1.png?raw=true "Inside an up to date repo")
 
